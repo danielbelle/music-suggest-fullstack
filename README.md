@@ -16,7 +16,7 @@ e Pardinho, permitindo sugestões de novas músicas via YouTube.
 
 ### Sprint 1: Setup Inicial e Infraestrutura
 
-- [ ] v1.1: Configurar Docker para backend Laravel
+- [✅] v1.1: Configurar Docker para backend Laravel
 - [ ] v1.2: Configurar Docker para frontend React
 - [ ] v1.3: Setup inicial do Laravel com autenticação
 - [ ] v1.4: Setup inicial do React com roteamento
