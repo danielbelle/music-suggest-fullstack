@@ -6,7 +6,7 @@ e Pardinho, permitindo sugestões de novas músicas via YouTube.
 ## 🚀 Tecnologias Utilizadas
 
 - **Backend**: Laravel 11.x, PHP 8.1+
-- **Frontend**: React 18.x
+- **Frontend**: React 18.x, tailwindcss v4.1
 - **Database**: MySQL 8.0
 - **Container**: Docker + Docker Compose
 - **Auth**: Laravel Sanctum

@@ -1,48 +1,47 @@
-version: "3.8"
+version: "3.9"
 services:
   backend:
     build: ./backend
-    container_name: top5-backend
-    restart: unless-stopped
-    working_dir: /var/www/html
+    container_name: laravel-app
     volumes:
-      - ./backend:/var/www/html
+      - ./backend:/var/www
     ports:
-      - "8000:8000"
-    environment:
-      - DB_HOST=mysql
-      - DB_DATABASE=top5_db
-      - DB_USERNAME=root
-      - DB_PASSWORD=secret
+      - "9000:9000"
     depends_on:
-      - mysql
+      - db
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: top5
+      DB_USERNAME: user
+      DB_PASSWORD: secret
 
   frontend:
     build: ./frontend
-    container_name: top5-frontend
-    restart: unless-stopped
-    working_dir: /app
+    container_name: react-app
     volumes:
       - ./frontend:/app
-      - /app/node_modules
     ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_API_URL=http://localhost:8000/api
+      - "3000:5173"
+    stdin_open: true
+    tty: true
     depends_on:
       - backend
 
-  mysql:
+  db:
     image: mysql:8.0
-    container_name: top5-mysql
-    restart: unless-stopped
+    container_name: mysql-db
+    restart: always
     environment:
-      MYSQL_DATABASE: top5_db
-      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: top5
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - dbdata:/var/lib/mysql
 
 volumes:
-  mysql_data:
+  dbdata:

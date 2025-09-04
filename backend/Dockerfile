@@ -1,35 +1,19 @@
 FROM php:8.1-fpm
 
-# Install system dependencies
+# Dependências
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    unzip
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+# Extensões necessárias do PHP
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer
-COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
+# Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-interaction --optimize-autoloader
+RUN composer install
 
-# Adjust permissions for Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache
-RUN chmod -R 775 storage bootstrap/cache
-
-# Expose port and start server
-EXPOSE 8000
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["php-fpm"]
