@@ -31,10 +31,10 @@ top5-tiao-carreiro-v2/
 
 ### Sprint 1: Setup Inicial e Infraestrutura
 
-- [✅] v1.1: Configurar Docker para backend Laravel
-- [✅] v1.2: Configurar Docker para frontend React
-- [ ] v1.3: Setup inicial do Laravel com autenticação
-- [ ] v1.4: Setup inicial do React com roteamento
+- [x] v1.1: Configurar Docker para backend Laravel
+- [x] v1.2: Configurar Docker para frontend React
+- [x] v1.3: Setup inicial do Laravel com autenticação
+- [x] v1.4: Setup inicial do React com roteamento
 - [ ] v1.5: Configurar comunicação entre containers
 
 ### Sprint 2: Modelagem de Dados e API
