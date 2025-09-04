@@ -14,10 +14,25 @@ e Pardinho, permitindo sugestões de novas músicas via YouTube.
 
 ## 📋 Sprint Planning
 
+### 📁 Estrutura do Projeto
+
+```
+top5-tiao-carreiro-v2/
+├── backend/
+│   ├── Dockerfile
+│   ├── .env
+│   └── (código Laravel)
+├── frontend/
+│   ├── Dockerfile
+│   ├── .env
+│   └── (código React)
+└── docker-compose.yml
+```
+
 ### Sprint 1: Setup Inicial e Infraestrutura
 
 - [✅] v1.1: Configurar Docker para backend Laravel
-- [ ] v1.2: Configurar Docker para frontend React
+- [✅] v1.2: Configurar Docker para frontend React
 - [ ] v1.3: Setup inicial do Laravel com autenticação
 - [ ] v1.4: Setup inicial do React com roteamento
 - [ ] v1.5: Configurar comunicação entre containers
@@ -133,17 +148,6 @@ docker-compose exec backend php artisan test
 
 # Testes frontend
 docker-compose exec frontend npm test
-```
-
----
-
-## 📁 Estrutura do Projeto
-
-```
-├── backend/
-├── frontend/
-├── docker-compose.yml
-└── README.md
 ```
 
 ---
