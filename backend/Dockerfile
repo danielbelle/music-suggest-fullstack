@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # Dependências
 RUN apt-get update && apt-get install -y \
@@ -16,4 +16,4 @@ COPY . .
 
 RUN composer install
 
-CMD ["php-fpm"]
+CMD php artisan serve --host=0.0.0.0 --port=9000
