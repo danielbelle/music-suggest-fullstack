@@ -3,6 +3,11 @@ BACKEND=laravel-app
 FRONTEND=react-app
 DB=mysql-db
 
+#
+startar:
+	docker-compose up -d --build && 
+	docker exec -it $(BACKEND) php artisan migrate
+
 # Subir containers
 up:
 	docker-compose up -d --build
@@ -46,3 +51,16 @@ npm-build:
 # Rodar frontend em modo dev
 npm-dev:
 	docker exec -it $(FRONTEND) npm run dev
+
+# Listar containers ativos
+on:
+	docker ps -a
+
+log-backend:
+	docker logs -f $(BACKEND)
+
+log-frontend:
+	docker logs -f $(FRONTEND)
+
+log-db:
+	docker logs -f $(DB)
