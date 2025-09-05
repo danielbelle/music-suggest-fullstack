@@ -1,48 +1,54 @@
 # Nome dos containers
-BACKEND=laravel-app
-FRONTEND=react-app
-DB=mysql-db
-HTTPSERVER=nginx
+backend=laravel-app
+frontend=react-app
+db=mysql-db
+nginx=nginx
 
 start:
+	@$(MAKE) verificationOS
 	@$(MAKE) up
 	@$(MAKE) wait-db
-	@$(MAKE) wait-backend
-	@docker exec -it $(BACKEND) php artisan migrate
+	@$(MAKE) migrate
+	@$(MAKE) seed
 	@$(MAKE) print-urls
 
 # Derrubar containers e limpar database
 finish:
-	@$(MAKE) wait-backend
-	@echo "Executando drop das tabelas (php artisan migrate:reset) no container $(BACKEND)..."
-	@docker exec -it $(BACKEND) php artisan migrate:reset --force || true
+	@echo "Executando drop das tabelas (php artisan migrate:reset) no container $(backend)..."
+	docker-compose exec -it backend php artisan migrate:reset --force || true
 	@echo "Finalizando containers e removendo volumes..."
-	@docker-compose down -v
-	@echo "Concluído."
+	docker-compose down -v
+	@$(MAKE) on
+	@echo "Finalizado."
 	
 # Esperar o banco de dados ficar pronto
 wait-db:
 	@echo "Aguardando o banco de dados ficar pronto..."
-	@while [ "$$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' $(DB) 2>/dev/null)" != "healthy" ]; do \
+	@while [ "$$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' $(db) 2>/dev/null)" != "healthy" ]; do \
 		sleep 2; \
 	done
 
 wait-backend:
-	@echo "Aguardando o $(BACKEND) ficar pronto (espera de 60s)..."
-	@timeout=60; \
-	while [ $$timeout -gt 0 ]; do \
-		status=$$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' $(BACKEND) 2>/dev/null); \
-		if [ "$$status" = "healthy" ] || [ "$$status" = "running" ]; then break; fi; \
-		sleep 1; \
-		timeout=$$((timeout - 1)); \
-	done; \
-	if [ $$timeout -eq 0 ]; then \
-		echo "Terminou a espera do $(BACKEND) ficar pronto!"; \
-		exit 1; \
-	fi
+	@echo "Aguardando o laravel-app ficar pronto (2 tentativas de 30s)..."
+	@for attempt in 1 2; do \
+		echo "Tentativa $$attempt de 2..."; \
+		for i in $$(seq 1 30); do \
+			if docker exec $(backend) curl -s http://localhost/musicas > /dev/null 2>&1; then \
+				echo "laravel-app está pronto!"; \
+				exit 0; \
+			fi; \
+			sleep 1; \
+		done; \
+		if [ "$$attempt" -lt 2 ]; then \
+			echo "Tentativa $$attempt falhou, aguardando 5s antes de tentar novamente..."; \
+			sleep 5; \
+		else \
+			echo "Timeout esperando o laravel-app ficar pronto após 2 tentativas!"; \
+			exit 1; \
+		fi; \
+	done
 
 print-urls:
-	@echo "Serviços disponíveis:"
 	@print_url() { \
 		cont=$$1; \
 		p=$$(docker port "$$cont" 2>/dev/null | sed -n 's/.*-> //p' | head -n1); \
@@ -58,11 +64,14 @@ print-urls:
 			echo " - $$cont: $${proto}://$${host}:$${port}"; \
 		fi; \
 	}; \
-	print_url $(BACKEND); \
-	print_url $(FRONTEND); \
-	print_url $(DB); \
-	print_url $(HTTPSERVER)
+	print_url $(backend); \
+	print_url $(frontend); \
+	print_url $(db); \
+	print_url $(nginx); \
 
+# Reiniciar Front
+upfront:
+	docker restart frontend
 
 # Subir containers
 up:
@@ -78,45 +87,53 @@ logs:
 
 # Entrar no container Laravel
 bash:
-	docker exec -it $(BACKEND) bash
+	docker-compose exec -it backend bash
 
 # Rodar migrations
 migrate:
-	docker exec -it $(BACKEND) php artisan migrate
+	docker-compose exec -it backend php artisan migrate
 
 # Rodar seeds
 seed:
-	docker exec -it $(BACKEND) php artisan db:seed
+	docker-compose exec -it backend php artisan db:seed
 
 # Limpar cache do Laravel
 cache-clear:
-	docker exec -it $(BACKEND) php artisan optimize:clear
+	docker-compose exec -it backend php artisan optimize:clear
 
 # Instalar dependências backend
 composer-install:
-	docker exec -it $(BACKEND) composer install
+	docker-compose exec -it backend composer install
 
 # Instalar dependências frontend
 npm-install:
-	docker exec -it $(FRONTEND) npm install
+	docker-compose exec -it frontend npm install
 
 # Rodar build frontend
 npm-build:
-	docker exec -it $(FRONTEND) npm run build
+	docker-compose exec -it frontend npm run build
 
 # Rodar frontend em modo dev
 npm-dev:
-	docker exec -it $(FRONTEND) npm run dev
+	docker-compose exec -it frontend npm run dev
 
 # Listar containers ativos
 on:
 	docker ps -a
 
 log-backend:
-	docker logs -f $(BACKEND)
+	docker logs -f $(backend)
 
 log-frontend:
-	docker logs -f $(FRONTEND)
+	docker logs -f $(frontend)
 
 log-db:
-	docker logs -f $(DB)
+	docker logs -f $(db)
+
+verificationOS:
+	@if [ "$$OS" = "Windows_NT" ]; then \
+		echo "Ambiente Windows detectado."; \
+		echo "Por favor, abra o terminal no PowerShell (recomendado) ou no CMD antes de prosseguir."; \
+		printf "Pressione Enter para continuar..."; \
+		read -r _; \
+	fi

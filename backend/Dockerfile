@@ -16,3 +16,5 @@ COPY . .
 
 RUN composer install
 
+CMD ["php-fpm"]
+
