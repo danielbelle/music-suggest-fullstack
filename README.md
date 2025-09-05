@@ -41,7 +41,7 @@ top5-tiao-carreiro-v2/
 
 - [x] v2.1: Criar migrations para músicas e sugestões
 - [x] v2.2: Implementar models e relações
-- [ ] v2.3: Desenvolver API REST para músicas
+- [x] v2.3: Desenvolver API REST para músicas
 - [ ] v2.4: Desenvolver API REST para sugestões
 - [ ] v2.5: Implementar validações de YouTube links
 
@@ -155,3 +155,20 @@ docker-compose exec frontend npm test
 ## 📞 Suporte
 
 Para dúvidas técnicas: henrique.danielb@gmail.com
+
+## 📡 API REST de Músicas
+
+A API REST para músicas oferece os seguintes endpoints:
+
+- `GET /api/musicas` — Lista todas as músicas cadastradas.
+- `GET /api/musicas/{musica}` — Exibe os detalhes de uma música específica.
+- `POST /api/musicas` — Cria uma nova música (requer autenticação).
+- `PUT /api/musicas/{musica}` — Atualiza uma música existente (requer
+  autenticação).
+- `DELETE /api/musicas/{musica}` — Remove (soft delete) uma música (requer
+  autenticação).
+- `PATCH /api/musicas/{musica}/restore` — Restaura uma música excluída (requer
+  autenticação).
+
+As operações de criação, edição, exclusão e restauração exigem que o usuário
+esteja autenticado via Sanctum.
