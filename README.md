@@ -47,7 +47,7 @@ top5-tiao-carreiro-v2/
 
 ### Sprint 3: Frontend - Listagem e Sugestões
 
-- [ ] v3.1: Componente de listagem das top 5 músicas
+- [x] v3.1: Componente de listagem das top 5 músicas
 - [ ] v3.2: Formulário de sugestão de novas músicas
 - [ ] v3.3: Integração com API Laravel
 - [ ] v3.4: Layout responsivo com TailwindCSS
@@ -81,6 +81,17 @@ top5-tiao-carreiro-v2/
 - [ ] v7.4: Testes finais e ajustes
 
 ## 🐳 Como Executar o Projeto
+
+### ⚠️ Atenção para usuários Windows
+
+> **IMPORTANTE:**  
+> Sempre execute os comandos Docker (como `docker-compose up`,
+> `docker-compose exec`, etc) pelo **CMD** ou **PowerShell** do Windows, e
+> **NÃO** pelo Git Bash ou WSL!  
+> Isso garante que os caminhos relativos dos volumes funcionem corretamente no
+> Docker.
+
+---
 
 ### Pré-requisitos
 
@@ -160,14 +171,13 @@ Para dúvidas técnicas: henrique.danielb@gmail.com
 
 A API REST para músicas oferece os seguintes endpoints:
 
-- `GET /api/musicas` — Lista todas as músicas cadastradas.
-- `GET /api/musicas/{musica}` — Exibe os detalhes de uma música específica.
-- `POST /api/musicas` — Cria uma nova música (requer autenticação).
-- `PUT /api/musicas/{musica}` — Atualiza uma música existente (requer
+- `GET /musicas` — Lista todas as músicas cadastradas.
+- `GET /musicas/{musica}` — Exibe os detalhes de uma música específica.
+- `POST /musicas` — Cria uma nova música (requer autenticação).
+- `PUT /musicas/{musica}` — Atualiza uma música existente (requer autenticação).
+- `DELETE /musicas/{musica}` — Remove (soft delete) uma música (requer
   autenticação).
-- `DELETE /api/musicas/{musica}` — Remove (soft delete) uma música (requer
-  autenticação).
-- `PATCH /api/musicas/{musica}/restore` — Restaura uma música excluída (requer
+- `PATCH /musicas/{musica}/restore` — Restaura uma música excluída (requer
   autenticação).
 
 As operações de criação, edição, exclusão e restauração exigem que o usuário
@@ -177,15 +187,15 @@ esteja autenticado via Sanctum.
 
 A API REST para sugestões oferece os seguintes endpoints:
 
-- `GET /api/sugestoes` — Lista todas as sugestões cadastradas.
-- `POST /api/sugestoes` — Cria uma nova sugestão (público ou autenticado).
-- `DELETE /api/sugestoes/{sugestao}` — Remove (soft delete) uma sugestão (requer
+- `GET /sugestoes` — Lista todas as sugestões cadastradas.
+- `POST /sugestoes` — Cria uma nova sugestão (público ou autenticado).
+- `DELETE /sugestoes/{sugestao}` — Remove (soft delete) uma sugestão (requer
   autenticação).
-- `PATCH /api/sugestoes/{id}/restore` — Restaura uma sugestão excluída (requer
+- `PATCH /sugestoes/{id}/restore` — Restaura uma sugestão excluída (requer
   autenticação).
-- `PATCH /api/sugestoes/{sugestao}/aprovar` — Aprova uma sugestão (requer
+- `PATCH /sugestoes/{sugestao}/aprovar` — Aprova uma sugestão (requer
   autenticação).
-- `PATCH /api/sugestoes/{sugestao}/reprovar` — Reprova uma sugestão (requer
+- `PATCH /sugestoes/{sugestao}/reprovar` — Reprova uma sugestão (requer
   autenticação).
 
 As operações de exclusão, restauração, aprovação e reprovação exigem que o
