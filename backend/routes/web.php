@@ -8,6 +8,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/ping', function () {
+    return response()->json(['message' => 'Backend conectado com sucesso!']);
+});
+
 Route::get('/db-test', function () {
     try {
         DB::connection()->getPdo();
