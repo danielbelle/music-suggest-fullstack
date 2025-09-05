@@ -42,7 +42,7 @@ top5-tiao-carreiro-v2/
 - [x] v2.1: Criar migrations para músicas e sugestões
 - [x] v2.2: Implementar models e relações
 - [x] v2.3: Desenvolver API REST para músicas
-- [ ] v2.4: Desenvolver API REST para sugestões
+- [x] v2.4: Desenvolver API REST para sugestões
 - [ ] v2.5: Implementar validações de YouTube links
 
 ### Sprint 3: Frontend - Listagem e Sugestões
@@ -172,3 +172,21 @@ A API REST para músicas oferece os seguintes endpoints:
 
 As operações de criação, edição, exclusão e restauração exigem que o usuário
 esteja autenticado via Sanctum.
+
+## 📡 API REST de Sugestões
+
+A API REST para sugestões oferece os seguintes endpoints:
+
+- `GET /api/sugestoes` — Lista todas as sugestões cadastradas.
+- `POST /api/sugestoes` — Cria uma nova sugestão (público ou autenticado).
+- `DELETE /api/sugestoes/{sugestao}` — Remove (soft delete) uma sugestão (requer
+  autenticação).
+- `PATCH /api/sugestoes/{id}/restore` — Restaura uma sugestão excluída (requer
+  autenticação).
+- `PATCH /api/sugestoes/{sugestao}/aprovar` — Aprova uma sugestão (requer
+  autenticação).
+- `PATCH /api/sugestoes/{sugestao}/reprovar` — Reprova uma sugestão (requer
+  autenticação).
+
+As operações de exclusão, restauração, aprovação e reprovação exigem que o
+usuário esteja autenticado via Sanctum.

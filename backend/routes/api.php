@@ -8,6 +8,7 @@ use App\Http\Controllers\MusicaController;
 Route::get('/musicas', [MusicaController::class, 'index']);
 Route::get('/sugestoes', [SugestaoController::class, 'index']);
 Route::get('/musicas/{musica}', [MusicaController::class, 'show']);
+Route::post('/sugestoes', [SugestaoController::class, 'store']);
 
 // Rotas protegidas (apenas autenticado)
 Route::middleware('auth:sanctum')->group(function () {
@@ -20,4 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/musicas/{musica}', [MusicaController::class, 'update']);
     Route::delete('/musicas/{musica}', [MusicaController::class, 'destroy']);
     Route::patch('/musicas/{musica}/restore', [MusicaController::class, 'restore']);
+    Route::delete('/sugestoes/{sugestao}', [SugestaoController::class, 'destroy']);
+    Route::patch('/sugestoes/{id}/restore', [SugestaoController::class, 'restore']);
 });
