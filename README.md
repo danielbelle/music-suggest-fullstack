@@ -40,7 +40,7 @@ top5-tiao-carreiro-v2/
 ### Sprint 2: Modelagem de Dados e API
 
 - [x] v2.1: Criar migrations para músicas e sugestões
-- [ ] v2.2: Implementar models e relações
+- [x] v2.2: Implementar models e relações
 - [ ] v2.3: Desenvolver API REST para músicas
 - [ ] v2.4: Desenvolver API REST para sugestões
 - [ ] v2.5: Implementar validações de YouTube links

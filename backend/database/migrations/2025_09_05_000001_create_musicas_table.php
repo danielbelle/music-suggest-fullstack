@@ -16,10 +16,19 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes(); // Soft delete
         });
+
+        Schema::table('musicas', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete()->after('id');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('musicas', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropColumn('user_id');
+        });
+
         Schema::dropIfExists('musicas');
     }
 };
