@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Musica;
 use Illuminate\Http\Request;
+use App\Models\Musica;
 
 class MusicaController extends Controller
 {

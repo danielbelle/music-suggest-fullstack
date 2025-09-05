@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sugestao;
 use Illuminate\Http\Request;
+use App\Models\Sugestao;
 use App\Rules\YouTubeUrl;
 
 class SugestaoController extends Controller
