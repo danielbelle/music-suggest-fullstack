@@ -43,7 +43,7 @@ top5-tiao-carreiro-v2/
 - [x] v2.2: Implementar models e relações
 - [x] v2.3: Desenvolver API REST para músicas
 - [x] v2.4: Desenvolver API REST para sugestões
-- [ ] v2.5: Implementar validações de YouTube links
+- [x] v2.5: Implementar validações de YouTube links
 
 ### Sprint 3: Frontend - Listagem e Sugestões
 
