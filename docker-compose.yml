@@ -4,6 +4,8 @@ services:
     container_name: laravel-app
     volumes:
       - ./backend:/var/www
+    expose:
+      - "9000"
     depends_on:
       - db
     environment:
@@ -32,10 +34,10 @@ services:
     container_name: mysql-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: top5
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
     volumes:
