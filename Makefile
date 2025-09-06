@@ -10,7 +10,7 @@ start:
 	@$(MAKE) wait-db
 	@$(MAKE) migrate
 	@$(MAKE) seed
-	@$(MAKE) print-urls
+	@$(MAKE) urls
 
 # Derrubar containers e limpar database
 finish:
@@ -48,7 +48,7 @@ wait-backend:
 		fi; \
 	done
 
-print-urls:
+urls:
 	@print_url() { \
 		cont=$$1; \
 		p=$$(docker port "$$cont" 2>/dev/null | sed -n 's/.*-> //p' | head -n1); \
