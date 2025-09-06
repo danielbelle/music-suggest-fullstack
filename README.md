@@ -53,12 +53,12 @@ top5-tiao-carreiro-v2/
 
 - [x] v3.1: Componente de listagem das top 5 músicas
 - [x] v3.2: Formulário de sugestão de novas músicas
-- [ ] v3.3: Integração com API Laravel
+- [x] v3.3: Integração com API Laravel
 - [ ] v3.4: Layout responsivo com TailwindCSS
 
 ### Sprint 4: Sistema de Autenticação
 
-- [ ] v4.1: Sistema de login frontend
+- [x] v4.1: Sistema de login frontend
 - [ ] v4.2: Proteção de rotas React
 - [ ] v4.3: Middleware de autenticação Laravel
 - [ ] v4.4: Gestão de tokens com Sanctum
