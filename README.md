@@ -61,7 +61,7 @@ top5-tiao-carreiro-v2/
 - [x] v4.1: Sistema de login frontend
 - [ ] v4.2: Proteção de rotas React
 - [x] v4.3: Middleware de autenticação Laravel
-- [ ] v4.4: Gestão de tokens com Sanctum
+- [x] v4.4: Gestão de tokens com Sanctum
 
 ### Sprint 5: Painel Administrativo
 

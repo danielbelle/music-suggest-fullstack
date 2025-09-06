@@ -16,9 +16,16 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return response()->json(['message' => 'Login realizado com sucesso!']);
+        // Use Auth::once para não criar sessão
+        if (Auth::once($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login realizado com sucesso!',
+                'token' => $token,
+                'user' => $user
+            ]);
         }
 
         return response()->json(['message' => 'Credenciais inválidas.'], 401);
@@ -26,9 +33,9 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // Revoga todos os tokens do usuário
+        $request->user()->tokens()->delete();
+
         return response()->json(['message' => 'Logout realizado com sucesso!']);
     }
 
@@ -46,9 +53,17 @@ class LoginController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
+        $token = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json(['message' => 'Conta criada com sucesso!']);
+        return response()->json([
+            'message' => 'Conta criada com sucesso!',
+            'token' => $token,
+            'user' => $user
+        ]);
+    }
+
+    public function user(Request $request)
+    {
+        return response()->json($request->user());
     }
 }

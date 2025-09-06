@@ -8,19 +8,16 @@ use App\Http\Controllers\SugestaoController;
 
 // Rotas públicas
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout']);
 Route::post('/register', [LoginController::class, 'register']);
 Route::get('/musicas', [MusicaController::class, 'index']);
 Route::get('/musicas/{musica}', [MusicaController::class, 'show']);
 Route::post('/sugestoes', [SugestaoController::class, 'store']);
 
-// Retorna usuário autenticado
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Rotas protegidas
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [LoginController::class, 'user']);
+    Route::post('/logout', [LoginController::class, 'logout']);
+
     Route::patch('/sugestoes/{sugestao}/aprovar', [SugestaoController::class, 'aprovar']);
     Route::patch('/sugestoes/{sugestao}/reprovar', [SugestaoController::class, 'reprovar']);
     Route::post('/musicas', [MusicaController::class, 'store']);
