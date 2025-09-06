@@ -21,12 +21,16 @@ top5-tiao-carreiro-v2/
 ├── backend/
 │   ├── Dockerfile
 │   ├── .env
-│   └── (código Laravel)
+│   └── ... (código Laravel)
 ├── frontend/
 │   ├── Dockerfile
-│   ├── .env
-│   └── (código React)
-└── docker-compose.yml
+│   └── ... (código React)
+├── nginx/
+│   └── default.conf
+├── docker-compose.yml
+├── Makefile
+├── .env
+└── README.md
 ```
 
 ### Sprint 1: Setup Inicial e Infraestrutura
@@ -48,7 +52,7 @@ top5-tiao-carreiro-v2/
 ### Sprint 3: Frontend - Listagem e Sugestões
 
 - [x] v3.1: Componente de listagem das top 5 músicas
-- [ ] v3.2: Formulário de sugestão de novas músicas
+- [x] v3.2: Formulário de sugestão de novas músicas
 - [ ] v3.3: Integração com API Laravel
 - [ ] v3.4: Layout responsivo com TailwindCSS
 
@@ -112,8 +116,7 @@ cd top5-tiao-carreiro-v2
 ### Configure as variáveis de ambiente
 
 ```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+cp backend/.env
 ```
 
 ### Execute os containers
@@ -141,13 +144,13 @@ docker-compose exec backend php artisan migrate --seed
 ### Acesse a aplicação
 
 - **Frontend:** http://localhost:3000
-- **Backend (API):** http://localhost:8000
+- **Backend:** http://localhost:9000
 - **Adminer:** http://localhost:8080
 
 ### Credenciais Padrão
 
-- **Email:** admin@techpines.com.br
-- **Senha:** password
+- **Email:**
+- **Senha:**
 
 ---
 

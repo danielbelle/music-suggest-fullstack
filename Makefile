@@ -70,7 +70,7 @@ print-urls:
 	print_url $(nginx); \
 
 # Reiniciar Front
-upfront:
+restartfront:
 	docker restart frontend
 
 # Subir containers

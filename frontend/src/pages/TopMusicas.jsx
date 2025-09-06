@@ -1,57 +1,58 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import Header from "../components/Header";
+import SuggestionForm from "../components/SuggestionForm";
+import EmptyState from "../components/EmptyState";
+import MusicList from "../components/MusicList";
 
-export default function Top5Musicas() {
-  const [musicas, setMusicas] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function TopMusicas() {
+  const [top5, setTop5] = useState([]);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:9000/musicas")
-      .then((res) => res.json())
-      .then((data) => {
-        // Ordena por visualizações e pega as 5 primeiras
-        const top5 = data
-          .sort((a, b) => b.visualizacoes - a.visualizacoes)
-          .slice(0, 5);
-        setMusicas(top5);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    async function fetchMusicas() {
+      try {
+        const res = await fetch("http://localhost:9000/musicas");
+        const data = await res.json();
+        setTop5(data);
+        console.log("Dados recebidos:", data);
+      } catch (error) {
+        setTop5([]);
+        console.error("Erro ao buscar músicas:", error);
+      }
+    }
+    fetchMusicas();
   }, []);
 
-  if (loading) return <div>Carregando...</div>;
+  function handleSuggest(url) {
+    fetch("/sugestoes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setMessage({ type: "success", text: "Sugestão enviada com sucesso!" });
+        // Opcional: recarregar lista
+      })
+      .catch(() =>
+        setMessage({ type: "error", text: "Erro ao enviar sugestão." })
+      );
+  }
 
   return (
-    <div className="max-w-xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Top 5 Músicas</h2>
-      <ul className="space-y-4">
-        {musicas.map((musica, idx) => (
-          <li
-            key={musica.id}
-            className="flex items-center bg-white rounded shadow p-3"
-          >
-            <span className="text-xl font-bold mr-4">{idx + 1}.</span>
-            <img
-              src={musica.thumb}
-              alt={musica.titulo}
-              className="w-16 h-16 rounded mr-4"
-            />
-            <div>
-              <div className="font-semibold">{musica.titulo}</div>
-              <div className="text-sm text-gray-500">
-                {musica.visualizacoes.toLocaleString()} views
-              </div>
-              <a
-                href={`https://www.youtube.com/watch?v=${musica.youtube_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 text-sm underline"
-              >
-                Ver no YouTube
-              </a>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Header />
+      <div className="container">
+        <SuggestionForm onSubmit={handleSuggest} message={message} />
+        {top5.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <>
+            <h3 className="section-title">Ranking Atual</h3>
+            <MusicList top5={top5} />
+          </>
+        )}
+      </div>
+    </>
   );
 }
