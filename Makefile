@@ -73,13 +73,13 @@ urls:
 
 # Reiniciar Front
 restartfront:
-	docker restart frontend
+	docker-compose restart frontend
 
 restartback:
-	docker restart backend
+	docker-compose restart backend
 
 restart:
-	docker restart backend frontend
+	docker-compose restart backend frontend
 # Subir containers
 up:
 	docker-compose up -d --build
@@ -129,16 +129,16 @@ npm-dev:
 
 # Listar containers ativos
 on:
-	docker ps -a
+	docker-compose ps -a
 
 log-backend:
-	docker logs -f $(backend)
+	docker-compose logs -f $(backend)
 
 log-frontend:
-	docker logs -f $(frontend)
+	docker-compose logs -f $(frontend)
 
 log-db:
-	docker logs -f $(db)
+	docker-compose logs -f $(db)
 
 reset-sql:
 	@echo "Dropping and recreating MySQL database (via mysql client)..."

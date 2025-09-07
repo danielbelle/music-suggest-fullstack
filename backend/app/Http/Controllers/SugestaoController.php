@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Sugestao;
+use App\Models\Musica;
 use App\Rules\YouTubeUrl;
 use App\Rules\YouTubeId;
 
@@ -34,7 +35,7 @@ class SugestaoController extends Controller
         $validated = $request->validate([
             'musica_id' => 'nullable|exists:musicas,id',
             'titulo' => 'required|string|max:255',
-            'youtube_id' => ['required', 'string', new YouTubeId], // ← Usar a nova Rule
+            'youtube_id' => ['required', 'string', new YouTubeId],
             'thumb' => 'required|string|max:255',
             'nome_usuario' => 'nullable|string|max:255',
             'email_usuario' => 'nullable|email|max:255',
@@ -64,13 +65,31 @@ class SugestaoController extends Controller
         return response()->json(['message' => 'Sugestão restaurada com sucesso.']);
     }
 
-    // Aprovar sugestão (autenticado)
+    // Aprovar sugestão (autenticado) - CORRIGIDO
     public function aprovar(Sugestao $sugestao)
     {
-        $sugestao->status = 'aprovada';
-        $sugestao->save();
+        // Criar uma nova música baseada na sugestão
+        $musicaData = [
+            'titulo' => $sugestao->titulo,
+            'youtube_id' => $sugestao->youtube_id,
+            'thumb' => $sugestao->thumb,
+            'visualizacoes' => 0,
+            'user_id' => $sugestao->user_id,
+        ];
 
-        return response()->json(['message' => 'Sugestão aprovada com sucesso.']);
+        // Criar a música
+        $musica = Musica::create($musicaData);
+
+        // Atualizar a sugestão com o ID da música criada e mudar status
+        $sugestao->update([
+            'status' => 'aprovada',
+            'musica_id' => $musica->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Sugestão aprovada e música criada com sucesso.',
+            'musica' => $musica
+        ]);
     }
 
     // Reprovar sugestão (autenticado)
