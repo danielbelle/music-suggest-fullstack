@@ -10,6 +10,9 @@ class Sugestao extends Model
 {
     use SoftDeletes;
 
+    // Corrige o nome da tabela para a tabela criada pela migration
+    protected $table = 'sugestoes';
+
     protected $fillable = [
         'musica_id',
         'titulo',

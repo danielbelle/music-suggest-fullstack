@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Sugestao;
 use App\Rules\YouTubeUrl;
+use App\Rules\YouTubeId;
 
 class SugestaoController extends Controller
 {
@@ -33,14 +34,14 @@ class SugestaoController extends Controller
         $validated = $request->validate([
             'musica_id' => 'nullable|exists:musicas,id',
             'titulo' => 'required|string|max:255',
-            'youtube_id' => ['required', 'string', new YouTubeUrl], // Aqui aplica a Rule
+            'youtube_id' => ['required', 'string', new YouTubeId], // ← Usar a nova Rule
             'thumb' => 'required|string|max:255',
             'nome_usuario' => 'nullable|string|max:255',
             'email_usuario' => 'nullable|email|max:255',
         ]);
 
         $sugestao = $request->user()
-            ? $request->user()->sugestoes()->create($validated)
+            ? $request->user()->sugestao()->create($validated)
             : Sugestao::create($validated);
 
         return response()->json($sugestao, 201);

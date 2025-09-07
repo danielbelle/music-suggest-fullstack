@@ -21,30 +21,89 @@ function TopMusicas() {
     }
   };
 
+  // Função para extrair ID do vídeo de qualquer formato do YouTube
+  const extractYouTubeId = (url) => {
+    const patterns = [
+      // Formato padrão: https://www.youtube.com/watch?v=VIDEO_ID
+      /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+      // Formato curto: https://youtu.be/VIDEO_ID
+      /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+      // Formato embed: https://www.youtube.com/embed/VIDEO_ID
+      /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+      // Formato mobile: https://m.youtube.com/watch?v=VIDEO_ID
+      /(?:m\.youtube\.com\/watch\?v=)([a-zA-Z09_-]{11})/,
+      // Formato com parâmetros extras: https://www.youtube.com/watch?v=VIDEO_ID&t=10s
+      /(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]{11})/,
+      // Formato com lista: https://www.youtube.com/watch?v=VIDEO_ID&list=LIST_ID
+      /(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]{11})/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+
+    return null;
+  };
+
+  // Função para buscar título do vídeo usando a API do YouTube
+  const fetchVideoTitle = async (youtubeId) => {
+    try {
+      // Você pode usar a API pública do YouTube (requer chave API)
+      // Ou uma alternativa sem API (pode ser bloqueada pelo CORS)
+
+      // Alternativa 1: Usando oAPI do YouTube (recomendado)
+      // const response = await fetch(
+      //   `https://www.googleapis.com/youtube/v3/videos?id=${youtubeId}&part=snippet&key=SUA_CHAVE_API`
+      // );
+      // const data = await response.json();
+      // return data.items[0]?.snippet?.title || "Título não disponível";
+
+      // Alternativa 2: Raspagem simples (pode não funcionar em produção)
+      const response = await fetch(
+        `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${youtubeId}`
+      );
+      const data = await response.json();
+      return data.title || "Título não disponível";
+    } catch (error) {
+      console.error("Erro ao buscar título:", error);
+      return "Título não disponível";
+    }
+  };
+
   const handleSuggest = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage(null);
 
     try {
-      const youtubeMatch = url.match(/(?:v=|\.be\/)([a-zA-Z0-9_-]{11})/);
-      const youtube_id = youtubeMatch ? youtubeMatch[1] : null;
+      const youtubeId = extractYouTubeId(url);
 
-      if (!youtube_id) {
-        setMessage({ type: "error", text: "URL do YouTube inválida." });
+      if (!youtubeId) {
+        setMessage({
+          type: "error",
+          text: "URL do YouTube inválida ou não reconhecida.",
+        });
         return;
       }
 
-      const titulo = "Título da Música";
-      const thumb = `https://img.youtube.com/vi/${youtube_id}/hqdefault.jpg`;
+      // Buscar título automaticamente
+      const titulo = await fetchVideoTitle(youtubeId);
+      const thumb = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
 
       await api.post("/sugestoes", {
-        youtube_id,
+        youtube_id: youtubeId,
         titulo,
         thumb,
       });
 
       setMessage({ type: "success", text: "Sugestão enviada com sucesso!" });
       setUrl("");
+
+      // Atualizar a lista de músicas
+      fetchMusicas();
     } catch (error) {
       setMessage({
         type: "error",
@@ -55,6 +114,7 @@ function TopMusicas() {
     }
   };
 
+  // ... resto do código permanece igual
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -90,7 +150,7 @@ function TopMusicas() {
           >
             <input
               type="url"
-              placeholder="Cole aqui o link do YouTube"
+              placeholder="Cole aqui o link do YouTube (qualquer formato)"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
