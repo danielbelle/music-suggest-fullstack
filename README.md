@@ -65,7 +65,7 @@ top5-tiao-carreiro-v2/
 
 ### Sprint 5: Painel Administrativo
 
-- [ ] v5.1: CRUD completo de músicas
+- [x] v5.1: CRUD completo de músicas
 - [ ] v5.2: Interface para aprovar/reprovar sugestões
 - [ ] v5.3: Filtros e busca no painel admin
 - [x] v5.4: Dashboard com estatísticas
