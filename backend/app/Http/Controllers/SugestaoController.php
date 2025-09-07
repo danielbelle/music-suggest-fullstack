@@ -81,4 +81,17 @@ class SugestaoController extends Controller
 
         return response()->json(['message' => 'Sugestão rejeitada com sucesso.']);
     }
+
+    // Listar sugestões pendentes (apenas para admin)
+    public function pendentes()
+    {
+        $sugestoes = Sugestao::where('status', 'pendente')
+            ->with(['user' => function ($query) {
+                $query->select('id', 'name', 'email');
+            }])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json($sugestoes);
+    }
 }

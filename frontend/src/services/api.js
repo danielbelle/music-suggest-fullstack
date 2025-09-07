@@ -31,4 +31,27 @@ api.interceptors.response.use(
   }
 );
 
+export const debugRoutes = async () => {
+  try {
+    const routesToTest = [
+      "/sugestoes",
+      "/musicas",
+      "/sugestoes/pendentes",
+      "/musicas/admin",
+      "/user",
+    ];
+
+    for (const route of routesToTest) {
+      try {
+        const response = await api.get(route);
+        console.log(`✅ ${route}:`, response.status);
+      } catch (error) {
+        console.log(`❌ ${route}:`, error.response?.status || error.message);
+      }
+    }
+  } catch (error) {
+    console.error("Erro no debug de rotas:", error);
+  }
+};
+
 export default api;

@@ -20,12 +20,18 @@ Route::middleware('auth:sanctum')->post('/logout', [LoginController::class, 'log
 
 // Rotas protegidas
 Route::middleware('auth:sanctum')->group(function () {
-    Route::patch('/sugestoes/{sugestao}/aprovar', [SugestaoController::class, 'aprovar']);
-    Route::patch('/sugestoes/{sugestao}/reprovar', [SugestaoController::class, 'reprovar']);
-    Route::post('/musicas', [MusicaController::class, 'store']);
-    Route::put('/musicas/{musica}', [MusicaController::class, 'update']);
-    Route::delete('/musicas/{musica}', [MusicaController::class, 'destroy']);
-    Route::patch('/musicas/{musica}/restore', [MusicaController::class, 'restore']);
-    Route::delete('/sugestoes/{sugestao}', [SugestaoController::class, 'destroy']);
-    Route::patch('/sugestoes/{id}/restore', [SugestaoController::class, 'restore']);
+    Route::prefix('sugestoes')->name('sugestoes.')->group(function () {
+        Route::get('/', [SugestaoController::class, 'index']);
+        Route::get('/pendentes', [SugestaoController::class, 'pendentes']);
+        Route::patch('/{sugestao}/aprovar', [SugestaoController::class, 'aprovar']);
+        Route::patch('/{sugestao}/reprovar', [SugestaoController::class, 'reprovar']);
+        Route::delete('/{sugestao}', [SugestaoController::class, 'destroy']);
+        Route::patch('/{id}/restore', [SugestaoController::class, 'restore']);
+    });
+    Route::prefix('musicas')->name('musicas.')->group(function () {
+        Route::post('/', [MusicaController::class, 'store']);
+        Route::put('/{musica}', [MusicaController::class, 'update']);
+        Route::delete('/{musica}', [MusicaController::class, 'destroy']);
+        Route::patch('/{musica}/restore', [MusicaController::class, 'restore']);
+    });
 });

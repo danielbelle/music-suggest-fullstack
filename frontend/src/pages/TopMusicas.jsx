@@ -84,15 +84,23 @@ function TopMusicas() {
       const titulo = await fetchVideoTitle(youtubeId);
       const thumb = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
 
+      // Enviar como sugestão
       await api.post("/sugestoes", {
         youtube_id: youtubeId,
-        titulo,
-        thumb,
+        titulo: titulo,
+        thumb: thumb,
+        // Opcional: adicionar nome/email se o usuário estiver logado
+        ...(user && {
+          nome_usuario: user.name,
+          email_usuario: user.email,
+        }),
       });
 
-      setMessage({ type: "success", text: "Sugestão enviada com sucesso!" });
+      setMessage({
+        type: "success",
+        text: "Sugestão enviada com sucesso! Aguarde aprovação.",
+      });
       setUrl("");
-      fetchMusicas();
     } catch (error) {
       setMessage({
         type: "error",

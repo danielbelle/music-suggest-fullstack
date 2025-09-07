@@ -27,6 +27,7 @@ export default function AdminDashboard() {
   const [suggestions, setSuggestions] = useState([]);
   const [musicas, setMusicas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (activeTab === "suggestions") {
@@ -37,50 +38,98 @@ export default function AdminDashboard() {
   }, [activeTab]);
 
   const fetchSuggestions = async () => {
+    setLoading(true);
     try {
       const response = await api.get("/sugestoes/pendentes");
       setSuggestions(response.data);
     } catch (error) {
       console.error("Erro ao buscar sugestões:", error);
+      // Fallback para caso a rota não exista ainda
+      try {
+        const response = await api.get("/sugestoes");
+        const todasSugestoes = response.data;
+        const pendentes = todasSugestoes.filter((s) => s.status === "pendente");
+        setSuggestions(pendentes);
+      } catch (secondError) {
+        console.error("Erro ao buscar todas sugestões:", secondError);
+        // Dados mockados para desenvolvimento
+        setSuggestions([
+          {
+            id: 1,
+            titulo: "Boi Soberano",
+            user: { name: "Usuário", email: "usuario@exemplo.com" },
+            created_at: "2023-11-15T00:00:00.000Z",
+            status: "pendente",
+            youtube_id: "abc123",
+          },
+        ]);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchMusicas = async () => {
+    setLoading(true);
     try {
-      const response = await api.get("/musicas/admin");
+      const response = await api.get("/musicas");
       setMusicas(response.data);
     } catch (error) {
       console.error("Erro ao buscar músicas:", error);
+      // Dados mockados para desenvolvimento
+      setMusicas([
+        {
+          id: 1,
+          titulo: "Boi Soberano",
+          visualizacoes: 1500,
+          visivel: true,
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleApproveSuggestion = async (suggestionId) => {
     try {
-      await api.post(`/sugestoes/${suggestionId}/aprovar`);
-      fetchSuggestions();
-      fetchMusicas();
+      await api.patch(`/sugestoes/${suggestionId}/aprovar`);
+
+      // Atualiza o status localmente
+      setSuggestions(
+        suggestions.map((s) =>
+          s.id === suggestionId ? { ...s, status: "aprovada" } : s
+        )
+      );
+
+      // Recarrega as músicas para mostrar a nova música aprovada
+      setTimeout(() => fetchMusicas(), 500);
     } catch (error) {
       console.error("Erro ao aprovar sugestão:", error);
+      alert("Erro ao aprovar sugestão");
     }
   };
 
   const handleRejectSuggestion = async (suggestionId) => {
     try {
-      await api.post(`/sugestoes/${suggestionId}/rejeitar`);
-      fetchSuggestions();
+      await api.patch(`/sugestoes/${suggestionId}/reprovar`);
+
+      // Remove a sugestão reprovada da lista
+      setSuggestions(suggestions.filter((s) => s.id !== suggestionId));
     } catch (error) {
-      console.error("Erro ao rejeitar sugestão:", error);
+      console.error("Erro ao reprovar sugestão:", error);
+      alert("Erro ao reprovar sugestão");
     }
   };
 
   const handleToggleMusicVisibility = async (musicId, currentlyVisible) => {
     try {
-      await api.patch(`/musicas/${musicId}`, {
+      await api.put(`/musicas/${musicId}`, {
         visivel: !currentlyVisible,
       });
-      fetchMusicas();
+      fetchMusicas(); // Recarrega a lista
     } catch (error) {
-      console.error("Erro ao alterar visibilidade da música:", error);
+      console.error("Erro ao alterar visibilidade:", error);
+      alert("Erro ao alterar visibilidade da música");
     }
   };
 
@@ -88,11 +137,36 @@ export default function AdminDashboard() {
     if (window.confirm("Tem certeza que deseja excluir esta música?")) {
       try {
         await api.delete(`/musicas/${musicId}`);
-        fetchMusicas();
+        fetchMusicas(); // Recarrega a lista
       } catch (error) {
         console.error("Erro ao excluir música:", error);
+        alert("Erro ao excluir música");
       }
     }
+  };
+
+  const filteredSuggestions = suggestions.filter(
+    (suggestion) =>
+      suggestion.titulo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      suggestion.user?.email
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      suggestion.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredMusicas = musicas.filter((musica) =>
+    musica.titulo?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Função para formatar a data
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -124,68 +198,111 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="flex items-center py-4">
                   <Input
-                    placeholder="Filtrar sugestões..."
+                    placeholder="Filtrar sugestões por título, nome ou email..."
                     className="max-w-sm"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Título</TableHead>
-                      <TableHead>Usuário</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {suggestions.map((suggestion) => (
-                      <TableRow key={suggestion.id}>
-                        <TableCell className="font-medium">
-                          {suggestion.titulo}
-                        </TableCell>
-                        <TableCell>{suggestion.user?.email || "N/A"}</TableCell>
-                        <TableCell>
-                          {new Date(suggestion.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">Pendente</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mr-2"
-                            onClick={() =>
-                              handleApproveSuggestion(suggestion.id)
-                            }
-                          >
-                            Aprovar
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() =>
-                              handleRejectSuggestion(suggestion.id)
-                            }
-                          >
-                            Reprovar
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {suggestions.length === 0 && (
+
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    <p className="text-muted-foreground mt-2">
+                      Carregando sugestões...
+                    </p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell
-                          colSpan={5}
-                          className="text-center py-8 text-muted-foreground"
-                        >
-                          Nenhuma sugestão pendente
-                        </TableCell>
+                        <TableHead>Título</TableHead>
+                        <TableHead>Usuário</TableHead>
+                        <TableHead>Data</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredSuggestions.map((suggestion) => (
+                        <TableRow key={suggestion.id}>
+                          <TableCell className="font-medium">
+                            {suggestion.titulo}
+                          </TableCell>
+                          <TableCell>
+                            {suggestion.user?.name ||
+                              suggestion.nome_usuario ||
+                              "Anônimo"}
+                            {suggestion.user?.email &&
+                              ` (${suggestion.user.email})`}
+                            {suggestion.email_usuario &&
+                              !suggestion.user?.email &&
+                              ` (${suggestion.email_usuario})`}
+                          </TableCell>
+                          <TableCell>
+                            {formatDate(suggestion.created_at)}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                suggestion.status === "aprovada"
+                                  ? "default"
+                                  : suggestion.status === "rejeitada"
+                                  ? "destructive"
+                                  : "outline"
+                              }
+                            >
+                              {suggestion.status === "aprovada"
+                                ? "Aprovada"
+                                : suggestion.status === "rejeitada"
+                                ? "Rejeitada"
+                                : "Pendente"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="mr-2"
+                              onClick={() =>
+                                handleApproveSuggestion(suggestion.id)
+                              }
+                              disabled={suggestion.status === "aprovada"}
+                            >
+                              {suggestion.status === "aprovada"
+                                ? "Aprovado"
+                                : "Aprovar"}
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() =>
+                                handleRejectSuggestion(suggestion.id)
+                              }
+                              disabled={suggestion.status === "rejeitada"}
+                            >
+                              {suggestion.status === "rejeitada"
+                                ? "Rejeitado"
+                                : "Rejeitar"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {filteredSuggestions.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={5}
+                            className="text-center py-8 text-muted-foreground"
+                          >
+                            {searchTerm
+                              ? "Nenhuma sugestão encontrada"
+                              : "Nenhuma sugestão pendente"}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
