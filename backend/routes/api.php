@@ -14,12 +14,12 @@ Route::post('/register', [LoginController::class, 'register']);
 Route::get('/musicas', [MusicaController::class, 'index']);
 Route::post('/sugestoes', [SugestaoController::class, 'store']);
 
-// rota protegida que usa cookie/session (Sanctum SPA)
-Route::middleware('auth:sanctum')->get('/user', [LoginController::class, 'user']);
-Route::middleware('auth:sanctum')->post('/logout', [LoginController::class, 'logout']);
-
 // Rotas protegidas
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [LoginController::class, 'user']);
+    Route::post('/logout', [LoginController::class, 'logout']);
+
+
     Route::prefix('sugestoes')->name('sugestoes.')->group(function () {
         Route::get('/', [SugestaoController::class, 'index']);
         Route::get('/pendentes', [SugestaoController::class, 'pendentes']);

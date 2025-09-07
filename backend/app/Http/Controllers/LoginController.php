@@ -56,7 +56,7 @@ class LoginController extends Controller
             'message' => 'Conta criada com sucesso!',
             'token' => $token,
             'user' => $user
-        ]);
+        ], 201);
     }
 
     public function user(Request $request)

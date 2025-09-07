@@ -75,6 +75,11 @@ urls:
 restartfront:
 	docker restart frontend
 
+restartback:
+	docker restart backend
+
+restart:
+	docker restart backend frontend
 # Subir containers
 up:
 	docker-compose up -d --build

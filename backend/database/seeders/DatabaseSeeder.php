@@ -13,10 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Desative temporariamente as factories comentando as linhas abaixo:
-        // \App\Models\Musica::factory(5)->create();
-        // \App\Models\Sugestao::factory(5)->create();
-
         // Use apenas o seeder de músicas
         $this->call([
             MusicaSeeder::class,
@@ -27,6 +23,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Root',
             'email' => 'root@root.com',
             'password' => Hash::make('root1234'), // senha: root1234
+        ]);
+
+        // Use o seeder de sugestões
+        $this->call([
+            SugestaoSeeder::class,
         ]);
     }
 }
