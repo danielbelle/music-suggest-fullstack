@@ -59,8 +59,25 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const signup = async (name, email, password) => {
+    try {
+      const response = await api.post("/register", { name, email, password });
+
+      if (response.data.token) {
+        localStorage.setItem("auth_token", response.data.token);
+        setUser(response.data.user);
+        return { ok: true };
+      }
+    } catch (error) {
+      return {
+        ok: false,
+        message: error.response?.data?.message || "Erro no cadastro",
+      };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

@@ -13,26 +13,33 @@ import {
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-export default function Login() {
+export default function SignUp() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [erro, setErro] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro("");
+
+    if (password !== passwordConfirmation) {
+      return setError("As senhas não coincidem");
+    }
+
+    setError("");
     setLoading(true);
 
-    const result = await login(email, password);
+    const result = await signup(name, email, password);
 
     setLoading(false);
     if (result.ok) {
       navigate("/");
     } else {
-      setErro(result.message || "Falha no login");
+      setError(result.message || "Falha no cadastro");
     }
   };
 
@@ -40,19 +47,31 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
+          <CardTitle className="text-2xl text-center">Criar conta</CardTitle>
           <CardDescription className="text-center">
-            Digite seu email e senha para acessar sua conta
+            Preencha os dados abaixo para criar sua conta
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {erro && (
+          {error && (
             <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{erro}</AlertDescription>
+              <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nome</Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Seu nome completo"
+              />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -61,7 +80,6 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoFocus
                 placeholder="seu@email.com"
               />
             </div>
@@ -78,15 +96,27 @@ export default function Login() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="passwordConfirmation">Confirmar Senha</Label>
+              <Input
+                id="passwordConfirmation"
+                type="password"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                required
+                placeholder="Confirme sua senha"
+              />
+            </div>
+
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? "Criando conta..." : "Criar conta"}
             </Button>
           </form>
 
           <div className="mt-4 text-center text-sm">
-            Não tem uma conta?{" "}
-            <Link to="/signup" className="text-primary hover:underline">
-              Cadastre-se
+            Já tem uma conta?{" "}
+            <Link to="/login" className="text-primary hover:underline">
+              Faça login
             </Link>
           </div>
         </CardContent>

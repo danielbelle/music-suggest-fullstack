@@ -68,7 +68,7 @@ top5-tiao-carreiro-v2/
 - [ ] v5.1: CRUD completo de músicas
 - [ ] v5.2: Interface para aprovar/reprovar sugestões
 - [ ] v5.3: Filtros e busca no painel admin
-- [ ] v5.4: Dashboard com estatísticas
+- [x] v5.4: Dashboard com estatísticas
 
 ### Sprint 6: Testes Automatizados
 

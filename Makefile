@@ -88,8 +88,11 @@ logs:
 	docker-compose logs -f
 
 # Entrar no container Laravel
-bash:
+bashb:
 	docker-compose exec -it backend bash
+
+bashf:
+	docker-compose exec -it frontend bash
 
 # Rodar migrations
 migrate:
