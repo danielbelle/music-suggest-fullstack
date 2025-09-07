@@ -5,6 +5,7 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import UserProfile from "@/pages/UserProfile";
 
 // Componente para rotas protegidas (apenas admin)
 function ProtectedRoute({ children }) {
@@ -60,6 +61,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <UserProfile />
           </ProtectedRoute>
         }
       />

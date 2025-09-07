@@ -41,11 +41,42 @@ class SugestaoController extends Controller
             'email_usuario' => 'nullable|email|max:255',
         ]);
 
-        $sugestao = $request->user()
-            ? $request->user()->sugestao()->create($validated)
-            : Sugestao::create($validated);
+        // Se usuário está autenticado, criar música diretamente
+        if ($request->user()) {
+            // Criar a música diretamente
+            $musicaData = [
+                'titulo' => $validated['titulo'],
+                'youtube_id' => $validated['youtube_id'],
+                'thumb' => $validated['thumb'],
+                'visualizacoes' => 0,
+                'user_id' => $request->user()->id,
+            ];
 
-        return response()->json($sugestao, 201);
+            $musica = Musica::create($musicaData);
+
+            // Criar sugestão com status aprovada
+            $sugestaoData = array_merge($validated, [
+                'status' => 'aprovada',
+                'musica_id' => $musica->id,
+                'user_id' => $request->user()->id,
+            ]);
+
+            $sugestao = $request->user()->sugestoes()->create($sugestaoData);
+
+            return response()->json([
+                'message' => 'Música adicionada com sucesso!',
+                'musica' => $musica,
+                'sugestao' => $sugestao
+            ], 201);
+        }
+
+        // Usuário não autenticado - processo normal
+        $sugestao = Sugestao::create($validated);
+
+        return response()->json([
+            'message' => 'Sugestão enviada com sucesso! Aguarde aprovação.',
+            'sugestao' => $sugestao
+        ], 201);
     }
 
     // Excluir (soft delete) sugestão (autenticado)

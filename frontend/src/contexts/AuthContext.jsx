@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "@/services/api";
 
 const AuthContext = createContext();
@@ -19,84 +19,48 @@ export function AuthProvider({ children }) {
         setUser(response.data);
       } catch (error) {
         console.error("Erro ao verificar autenticação:", error);
-        logout();
+        localStorage.removeItem("auth_token");
       }
     }
     setLoading(false);
   };
 
-  const login = async (email, password) => {
-    try {
-      const response = await api.post("/login", { email, password });
-
-      if (response.data) {
-        if (response.data.token) {
-          localStorage.setItem("auth_token", response.data.token);
-          setUser(response.data.user);
-          return { ok: true };
-        }
-        // Se retornar apenas o usuário (com token no cookie)
-        else if (response.data.id) {
-          setUser(response.data);
-          return { ok: true };
-        }
-      }
-
-      return { ok: false, message: "Resposta inválida do servidor" };
-    } catch (error) {
-      return {
-        ok: false,
-        message: error.response?.data?.message || "Erro no login",
-      };
-    }
+  const login = (userData, token) => {
+    setUser(userData);
+    localStorage.setItem("auth_token", token);
   };
 
   const logout = async () => {
     try {
       await api.post("/logout");
     } catch (error) {
-      console.error("Erro no logout:", error);
+      console.error("Erro ao fazer logout:", error);
     } finally {
-      localStorage.removeItem("auth_token");
       setUser(null);
+      localStorage.removeItem("auth_token");
     }
   };
 
-  const signup = async (name, email, password) => {
-    try {
-      const response = await api.post("/register", { name, email, password });
-
-      if (response.data) {
-        if (response.data.token) {
-          localStorage.setItem("auth_token", response.data.token);
-          setUser(response.data.user);
-          return { ok: true };
-        } else if (response.data.id) {
-          setUser(response.data);
-          return { ok: true };
-        }
-      }
-
-      return { ok: false, message: "Resposta inválida do servidor" };
-    } catch (error) {
-      return {
-        ok: false,
-        message: error.response?.data?.message || "Erro no cadastro",
-      };
-    }
+  // FUNÇÃO para atualizar o usuário
+  const updateUser = (userData) => {
+    setUser(userData);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, logout, signup }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    user,
+    loading,
+    login,
+    logout,
+    updateUser,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider");
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
   return context;
-}
+};

@@ -26,21 +26,69 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (password !== passwordConfirmation) {
-      return setError("As senhas não coincidem");
-    }
-
-    setError("");
     setLoading(true);
+    setMessage(null);
 
-    const result = await signup(name, email, password);
+    try {
+      const response = await api.post("/register", {
+        name,
+        email,
+        password,
+      });
 
-    setLoading(false);
-    if (result.ok) {
-      navigate("/");
-    } else {
-      setError(result.message || "Falha no cadastro");
+      //  Verificar se a resposta existe
+      if (response.data) {
+        const { token, user } = response.data;
+
+        if (token && user) {
+          login(user, token);
+          navigate("/");
+        } else {
+          setMessage({
+            type: "error",
+            text: "Resposta inválida do servidor",
+          });
+        }
+      } else {
+        setMessage({
+          type: "error",
+          text: "Não foi possível conectar ao servidor",
+        });
+      }
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+
+      // Tratar diferentes tipos de erro
+      if (error.response) {
+        if (error.response.status === 422) {
+          setMessage({
+            type: "error",
+            text: "Email já cadastrado ou dados inválidos",
+          });
+        } else if (error.response.data?.message) {
+          setMessage({
+            type: "error",
+            text: error.response.data.message,
+          });
+        } else {
+          setMessage({
+            type: "error",
+            text: "Erro no servidor. Tente novamente.",
+          });
+        }
+      } else if (error.request) {
+        setMessage({
+          type: "error",
+          text: "Não foi possível conectar ao servidor. Verifique sua conexão.",
+        });
+      } else {
+        setMessage({
+          type: "error",
+          text: "Erro inesperado. Tente novamente.",
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 

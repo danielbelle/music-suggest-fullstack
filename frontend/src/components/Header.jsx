@@ -8,7 +8,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Menu, Home, User, LayoutDashboard, LogIn } from "lucide-react";
+import {
+  Menu,
+  Home,
+  User,
+  LayoutDashboard,
+  LogIn,
+  Settings,
+} from "lucide-react";
 
 export function Header() {
   const { user, logout } = useAuth();
@@ -28,10 +35,15 @@ export function Header() {
     navigate("/admin");
   };
 
+  const handleNavigateToProfile = () => {
+    navigate("/profile");
+  };
+
   const isAdminPage = location.pathname === "/admin";
   const isHomePage = location.pathname === "/";
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
+  const isProfilePage = location.pathname === "/profile";
 
   return (
     <header className="border-b bg-card sticky top-0 z-10">
@@ -59,7 +71,7 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {!isHomePage && !isAuthPage && (
+              {!isHomePage && !isAuthPage && !isProfilePage && (
                 <DropdownMenuItem onClick={handleNavigateToHome}>
                   <Home className="h-4 w-4 mr-2" />
                   Página Inicial
@@ -72,7 +84,17 @@ export function Header() {
                 </DropdownMenuItem>
               )}
               {user ? (
-                <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
+                <>
+                  {!isProfilePage && (
+                    <DropdownMenuItem onClick={handleNavigateToProfile}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Meu Perfil
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Sair
+                  </DropdownMenuItem>
+                </>
               ) : (
                 <>
                   {!isAuthPage && (
@@ -98,7 +120,7 @@ export function Header() {
 
           {/* Menu para desktop */}
           <div className="hidden md:flex items-center gap-4">
-            {!isHomePage && !isAuthPage && (
+            {!isHomePage && !isAuthPage && !isProfilePage && (
               <Button variant="outline" onClick={handleNavigateToHome}>
                 <Home className="h-4 w-4 mr-2" />
                 Página Inicial
@@ -124,6 +146,12 @@ export function Header() {
                       {isAdminPage ? "Administrador" : "Usuário"}
                     </p>
                   </div>
+                  {!isProfilePage && (
+                    <DropdownMenuItem onClick={handleNavigateToProfile}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Meu Perfil
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleLogout}>
                     Sair
                   </DropdownMenuItem>
