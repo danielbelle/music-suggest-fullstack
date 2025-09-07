@@ -8,35 +8,41 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
+    checkAuth();
   }, []);
 
-  const fetchUser = async () => {
-    try {
-      const response = await api.get("/user");
-      setUser(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar usuário:", error);
-      logout();
-    } finally {
-      setLoading(false);
+  const checkAuth = async () => {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      try {
+        const response = await api.get("/user");
+        setUser(response.data);
+      } catch (error) {
+        console.error("Erro ao verificar autenticação:", error);
+        logout();
+      }
     }
+    setLoading(false);
   };
 
   const login = async (email, password) => {
     try {
       const response = await api.post("/login", { email, password });
 
-      if (response.data.token) {
-        localStorage.setItem("auth_token", response.data.token);
-        setUser(response.data.user);
-        return { ok: true };
+      if (response.data) {
+        if (response.data.token) {
+          localStorage.setItem("auth_token", response.data.token);
+          setUser(response.data.user);
+          return { ok: true };
+        }
+        // Se retornar apenas o usuário (com token no cookie)
+        else if (response.data.id) {
+          setUser(response.data);
+          return { ok: true };
+        }
       }
+
+      return { ok: false, message: "Resposta inválida do servidor" };
     } catch (error) {
       return {
         ok: false,
@@ -60,11 +66,18 @@ export function AuthProvider({ children }) {
     try {
       const response = await api.post("/register", { name, email, password });
 
-      if (response.data.token) {
-        localStorage.setItem("auth_token", response.data.token);
-        setUser(response.data.user);
-        return { ok: true };
+      if (response.data) {
+        if (response.data.token) {
+          localStorage.setItem("auth_token", response.data.token);
+          setUser(response.data.user);
+          return { ok: true };
+        } else if (response.data.id) {
+          setUser(response.data);
+          return { ok: true };
+        }
       }
+
+      return { ok: false, message: "Resposta inválida do servidor" };
     } catch (error) {
       return {
         ok: false,

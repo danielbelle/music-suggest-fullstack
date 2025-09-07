@@ -13,8 +13,10 @@ const api = axios.create({
 // Interceptor para adicionar token automaticamente
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("auth_token");
+  console.log("Token encontrado:", token ? "Sim" : "Não");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+    console.log("Authorization header adicionado");
   }
   return config;
 });
@@ -31,26 +33,29 @@ api.interceptors.response.use(
   }
 );
 
-export const debugRoutes = async () => {
+export const testApiConnection = async () => {
   try {
-    const routesToTest = [
-      "/sugestoes",
-      "/musicas",
-      "/sugestoes/pendentes",
-      "/musicas/admin",
-      "/user",
-    ];
+    console.log("Testando conexão com API...");
 
-    for (const route of routesToTest) {
+    // Teste rota pública
+    const publicResponse = await api.get("/musicas");
+    console.log("✅ Rotas públicas funcionando:", publicResponse.status);
+
+    // Teste rota protegida (se estiver autenticado)
+    const token = localStorage.getItem("auth_token");
+    if (token) {
       try {
-        const response = await api.get(route);
-        console.log(`✅ ${route}:`, response.status);
+        const protectedResponse = await api.get("/user");
+        console.log(
+          "✅ Rotas protegidas funcionando:",
+          protectedResponse.status
+        );
       } catch (error) {
-        console.log(`❌ ${route}:`, error.response?.status || error.message);
+        console.log("❌ Erro em rota protegida:", error.response?.status);
       }
     }
   } catch (error) {
-    console.error("Erro no debug de rotas:", error);
+    console.error("❌ Erro na conexão com API:", error.message);
   }
 };
 

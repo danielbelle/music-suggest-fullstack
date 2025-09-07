@@ -28,6 +28,8 @@ services:
     tty: true
     depends_on:
       - backend
+    environment:
+      - VITE_API_URL=http://localhost:9000/api
 
   db:
     image: mysql:8.0
