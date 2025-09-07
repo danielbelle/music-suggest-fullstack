@@ -16,8 +16,7 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        // Use Auth::once para não criar sessão
-        if (Auth::once($credentials)) {
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('auth-token')->plainTextToken;
 
@@ -33,9 +32,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        // Revoga todos os tokens do usuário
         $request->user()->tokens()->delete();
-
         return response()->json(['message' => 'Logout realizado com sucesso!']);
     }
 

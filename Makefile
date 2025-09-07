@@ -14,8 +14,10 @@ start:
 
 # Derrubar containers e limpar database
 finish:
-	@echo "Executando drop das tabelas (php artisan migrate:reset) no container $(backend)..."
-	docker-compose exec -it backend php artisan migrate:reset --force || true
+	@$(MAKE) reset-sql
+	@echo "Parando frontend, backend, mysql e nginx..."
+	@docker-compose stop backend frontend db nginx || true
+	@docker stop $(frontend) $(backend) $(db) $(nginx) 2>/dev/null || true
 	@echo "Finalizando containers e removendo volumes..."
 	docker-compose down -v
 	@$(MAKE) on
@@ -130,6 +132,11 @@ log-frontend:
 log-db:
 	docker logs -f $(db)
 
+reset-sql:
+	@echo "Dropping and recreating MySQL database (via mysql client)..."
+	@docker-compose exec db sh -c 'mysql -u"user" -p"secret" -e "DROP DATABASE IF EXISTS \`top5\`; CREATE DATABASE \`top5\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"'
+	@docker-compose exec backend php artisan migrate --seed
+
 verificationOS:
 	@if [ "$$OS" = "Windows_NT" ]; then \
 		echo "Ambiente Windows detectado."; \
@@ -137,3 +144,4 @@ verificationOS:
 		printf "Pressione Enter para continuar..."; \
 		read -r _; \
 	fi
+
