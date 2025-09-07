@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Footer } from "@/components/Footer";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -37,60 +38,63 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
-          <CardDescription className="text-center">
-            Digite seu email e senha para acessar sua conta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {erro && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{erro}</AlertDescription>
-            </Alert>
-          )}
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Login</CardTitle>
+            <CardDescription className="text-center">
+              Digite seu email e senha para acessar sua conta
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {erro && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>{erro}</AlertDescription>
+              </Alert>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoFocus
-                placeholder="seu@email.com"
-              />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoFocus
+                  placeholder="seu@email.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Sua senha"
+                />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
+
+            <div className="mt-4 text-center text-sm">
+              Não tem uma conta?{" "}
+              <Link to="/signup" className="text-primary hover:underline">
+                Cadastre-se
+              </Link>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Sua senha"
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center text-sm">
-            Não tem uma conta?{" "}
-            <Link to="/signup" className="text-primary hover:underline">
-              Cadastre-se
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
+      <Footer />
     </div>
   );
 }

@@ -18,8 +18,7 @@ export function AuthProvider({ children }) {
 
   const fetchUser = async () => {
     try {
-      // ALTERAR: remover /api da frente
-      const response = await api.get("/user"); // ← CORRIGIDO
+      const response = await api.get("/user");
       setUser(response.data);
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
@@ -31,8 +30,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      // ALTERAR: remover /api da frente
-      const response = await api.post("/login", { email, password }); // ← CORRIGIDO
+      const response = await api.post("/login", { email, password });
 
       if (response.data.token) {
         localStorage.setItem("auth_token", response.data.token);
@@ -49,8 +47,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      // ALTERAR: remover /api da frente
-      await api.post("/logout"); // ← CORRIGIDO
+      await api.post("/logout");
     } catch (error) {
       console.error("Erro no logout:", error);
     } finally {

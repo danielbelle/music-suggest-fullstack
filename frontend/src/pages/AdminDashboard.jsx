@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,88 +18,88 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Menu, Home, User } from "lucide-react";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import api from "@/services/api";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("suggestions");
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const [suggestions, setSuggestions] = useState([]);
+  const [musicas, setMusicas] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
+  useEffect(() => {
+    if (activeTab === "suggestions") {
+      fetchSuggestions();
+    } else if (activeTab === "musics") {
+      fetchMusicas();
+    }
+  }, [activeTab]);
+
+  const fetchSuggestions = async () => {
+    try {
+      const response = await api.get("/sugestoes/pendentes");
+      setSuggestions(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar sugestões:", error);
+    }
   };
 
-  const handleNavigateToHome = () => {
-    navigate("/");
+  const fetchMusicas = async () => {
+    try {
+      const response = await api.get("/musicas/admin");
+      setMusicas(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar músicas:", error);
+    }
+  };
+
+  const handleApproveSuggestion = async (suggestionId) => {
+    try {
+      await api.post(`/sugestoes/${suggestionId}/aprovar`);
+      fetchSuggestions();
+      fetchMusicas();
+    } catch (error) {
+      console.error("Erro ao aprovar sugestão:", error);
+    }
+  };
+
+  const handleRejectSuggestion = async (suggestionId) => {
+    try {
+      await api.post(`/sugestoes/${suggestionId}/rejeitar`);
+      fetchSuggestions();
+    } catch (error) {
+      console.error("Erro ao rejeitar sugestão:", error);
+    }
+  };
+
+  const handleToggleMusicVisibility = async (musicId, currentlyVisible) => {
+    try {
+      await api.patch(`/musicas/${musicId}`, {
+        visivel: !currentlyVisible,
+      });
+      fetchMusicas();
+    } catch (error) {
+      console.error("Erro ao alterar visibilidade da música:", error);
+    }
+  };
+
+  const handleDeleteMusic = async (musicId) => {
+    if (window.confirm("Tem certeza que deseja excluir esta música?")) {
+      try {
+        await api.delete(`/musicas/${musicId}`);
+        fetchMusicas();
+      } catch (error) {
+        console.error("Erro ao excluir música:", error);
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold hidden sm:block">
-              Painel Administrativo
-            </h1>
-          </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
 
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-
-            {/* Menu Dropdown para mobile */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleNavigateToHome}>
-                  <Home className="h-4 w-4 mr-2" />
-                  Página Inicial
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Menu para desktop */}
-            <div className="hidden md:flex items-center gap-4">
-              <Button variant="outline" onClick={handleNavigateToHome}>
-                <Home className="h-4 w-4 mr-2" />
-                Página Inicial
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <div className="px-2 py-1.5 text-sm">
-                    <p className="font-medium">{user?.name || user?.email}</p>
-                    <p className="text-muted-foreground">Administrador</p>
-                  </div>
-                  <DropdownMenuItem onClick={handleLogout}>
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container px-4 py-8">
+      <main className="flex-1 container px-4 py-8">
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
@@ -139,24 +139,51 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">
-                        Boi Soberano
-                      </TableCell>
-                      <TableCell>usuario@exemplo.com</TableCell>
-                      <TableCell>2023-11-15</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">Pendente</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="outline" size="sm" className="mr-2">
-                          Aprovar
-                        </Button>
-                        <Button variant="destructive" size="sm">
-                          Reprovar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                    {suggestions.map((suggestion) => (
+                      <TableRow key={suggestion.id}>
+                        <TableCell className="font-medium">
+                          {suggestion.titulo}
+                        </TableCell>
+                        <TableCell>{suggestion.user?.email || "N/A"}</TableCell>
+                        <TableCell>
+                          {new Date(suggestion.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">Pendente</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mr-2"
+                            onClick={() =>
+                              handleApproveSuggestion(suggestion.id)
+                            }
+                          >
+                            Aprovar
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() =>
+                              handleRejectSuggestion(suggestion.id)
+                            }
+                          >
+                            Reprovar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {suggestions.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={5}
+                          className="text-center py-8 text-muted-foreground"
+                        >
+                          Nenhuma sugestão pendente
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -172,12 +199,69 @@ export default function AdminDashboard() {
                     Visualize e gerencie todas as músicas do sistema
                   </CardDescription>
                 </div>
-                <Button>Adicionar Música</Button>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>Funcionalidade em desenvolvimento</p>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Título</TableHead>
+                      <TableHead>Visualizações</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {musicas.map((musica) => (
+                      <TableRow key={musica.id}>
+                        <TableCell className="font-medium">
+                          {musica.titulo}
+                        </TableCell>
+                        <TableCell>
+                          {musica.visualizacoes.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={musica.visivel ? "default" : "outline"}
+                          >
+                            {musica.visivel ? "Visível" : "Oculta"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant={musica.visivel ? "outline" : "default"}
+                            size="sm"
+                            className="mr-2"
+                            onClick={() =>
+                              handleToggleMusicVisibility(
+                                musica.id,
+                                musica.visivel
+                              )
+                            }
+                          >
+                            {musica.visivel ? "Ocultar" : "Mostrar"}
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteMusic(musica.id)}
+                          >
+                            Excluir
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {musicas.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className="text-center py-8 text-muted-foreground"
+                        >
+                          Nenhuma música cadastrada
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
@@ -191,7 +275,7 @@ export default function AdminDashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">45</div>
+                  <div className="text-2xl font-bold">{musicas.length}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -201,7 +285,7 @@ export default function AdminDashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">12</div>
+                  <div className="text-2xl font-bold">{suggestions.length}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -211,17 +295,26 @@ export default function AdminDashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">12,234</div>
+                  <div className="text-2xl font-bold">
+                    {musicas
+                      .reduce(
+                        (total, musica) => total + musica.visualizacoes,
+                        0
+                      )
+                      .toLocaleString()}
+                  </div>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Usuários Ativos
+                    Músicas Visíveis
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">573</div>
+                  <div className="text-2xl font-bold">
+                    {musicas.filter((m) => m.visivel).length}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -244,6 +337,8 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs>
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -10,24 +10,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Menu, User } from "lucide-react";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 function TopMusicas() {
   const [top5, setTop5] = useState([]);
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMusicas();
@@ -113,76 +103,11 @@ function TopMusicas() {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
-
-  const handleNavigateToAdmin = () => {
-    navigate("/admin");
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Barra de Navegação */}
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold hidden sm:block">Top 5 Músicas</h1>
-            <span className="text-muted-foreground hidden md:block">
-              Tião Carreiro & Pardinho
-            </span>
-          </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
 
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-
-            {/* Menu Dropdown para mobile */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {user && (
-                  <DropdownMenuItem onClick={handleNavigateToAdmin}>
-                    Painel Admin
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Menu para desktop */}
-            <div className="hidden md:flex items-center gap-4">
-              {user && (
-                <Button variant="outline" onClick={handleNavigateToAdmin}>
-                  Painel Admin
-                </Button>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <div className="px-2 py-1.5 text-sm">
-                    <p className="font-medium">{user?.name || user?.email}</p>
-                    <p className="text-muted-foreground">Usuário</p>
-                  </div>
-                  <DropdownMenuItem onClick={handleLogout}>
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         {/* Header Principal */}
         <Card className="mb-8 text-center">
           <CardHeader>
@@ -286,7 +211,9 @@ function TopMusicas() {
             )}
           </CardContent>
         </Card>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

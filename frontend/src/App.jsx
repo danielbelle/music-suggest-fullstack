@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
-// Componente para rotas protegidas
+// Componente para rotas protegidas (apenas admin)
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
@@ -56,14 +56,6 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <TopMusicas />
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/admin"
         element={
           <ProtectedRoute>
@@ -71,6 +63,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      {/* Rota principal livre para todos */}
+      <Route path="/" element={<TopMusicas />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
