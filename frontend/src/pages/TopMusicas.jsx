@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 import { useOptimisticUpdate } from "@/hooks/useOptimisticUpdate";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import PerfilImage from "@/assets/perfilImg.png";
 
 export default function TopMusicas() {
   const { user } = useAuth();
@@ -158,7 +159,7 @@ export default function TopMusicas() {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+        <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
           <div className="text-center py-12">Carregando...</div>
         </main>
         <Footer />
@@ -170,7 +171,7 @@ export default function TopMusicas() {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         {message && (
           <Alert
             variant={message.type === "error" ? "destructive" : "default"}
@@ -179,7 +180,6 @@ export default function TopMusicas() {
             <AlertDescription>{message.text}</AlertDescription>
           </Alert>
         )}
-
         {/* Header Principal */}
         <Card className="mb-8 text-center">
           <CardHeader>
@@ -190,8 +190,17 @@ export default function TopMusicas() {
               Tião Carreiro & Pardinho
             </CardDescription>
           </CardHeader>
+          <CardContent>
+            <img
+              src={PerfilImage}
+              alt="Tião Carreiro e Pardinho"
+              className="mx-auto w-32 h-32 rounded-2xl object-cover mb-4"
+            />
+            <p className="text-muted-foreground">
+              O legado da música sertaneja de raiz
+            </p>
+          </CardContent>
         </Card>
-
         {/* Formulário de Sugestão */}
         <Card className="mb-8">
           <CardHeader>
@@ -206,7 +215,6 @@ export default function TopMusicas() {
             <SuggestionForm onSuggestionAdded={handleSuggestionAdded} />
           </CardContent>
         </Card>
-
         {/* Lista de Músicas */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">

@@ -14,13 +14,11 @@ export default function MusicCard({
   onDelete,
   onEditFormChange,
 }) {
-  // Função para evitar propagação de eventos
   const stopPropagation = (e) => {
     e.stopPropagation();
     e.preventDefault();
   };
 
-  // Função para abrir o YouTube
   const openYouTube = () => {
     window.open(
       `https://www.youtube.com/watch?v=${musica.youtube_id}`,
@@ -32,9 +30,9 @@ export default function MusicCard({
     return (
       <div
         className="bg-muted rounded-lg p-3 hover:bg-accent transition-colors border group relative cursor-pointer"
-        onClick={!isEditing ? openYouTube : undefined} // Só é clicável quando não está editando
+        onClick={!isEditing ? openYouTube : undefined}
       >
-        {/* Botões de edição para usuários autenticados */}
+        {/* Botões de edição responsivos */}
         {canEdit && (
           <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
             {isEditing ? (
@@ -90,12 +88,12 @@ export default function MusicCard({
           </div>
         )}
 
-        {/* REMOVIDO o link <a> que envolvia tudo */}
         <div className="flex flex-col h-full">
+          {/* Thumb aumentada - de h-32 para h-40 */}
           <img
             src={musica.thumb}
             alt={musica.titulo}
-            className="w-full h-32 rounded-lg object-cover mb-3"
+            className="w-full h-40 md:h-48 lg:h-56 rounded-lg object-cover mb-3"
           />
 
           <div className="flex-1 min-w-0">
@@ -145,7 +143,7 @@ export default function MusicCard({
             <span className="text-xs text-muted-foreground">
               Posição #{index + 1}
             </span>
-            {!isEditing && ( // Só mostra o ícone do YouTube quando não está editando
+            {!isEditing && (
               <div
                 className="text-primary opacity-0 group-hover:opacity-100 transition-opacity text-sm cursor-pointer"
                 onClick={openYouTube}
@@ -162,18 +160,18 @@ export default function MusicCard({
   // Para o layout não compact (top 5)
   return (
     <div
-      className="flex items-center bg-muted rounded-lg p-4 hover:bg-accent transition-colors border group relative cursor-pointer"
-      onClick={!isEditing ? openYouTube : undefined} // Só é clicável quando não está editando
+      className="flex flex-col sm:flex-row items-center bg-muted rounded-lg p-4 hover:bg-accent transition-colors border group relative cursor-pointer gap-4"
+      onClick={!isEditing ? openYouTube : undefined}
     >
       {/* Número da posição */}
       <div className="text-2xl font-bold text-primary w-10 text-center">
-        {index + 1}
+        #{index + 1}
       </div>
 
       <img
         src={musica.thumb}
         alt={musica.titulo}
-        className="w-16 h-16 rounded-lg object-cover mx-4"
+        className="w-30 h-30 rounded-lg object-cover"
       />
 
       <div className="flex-1 min-w-0">
@@ -190,6 +188,7 @@ export default function MusicCard({
               placeholder="Título"
               onClick={stopPropagation}
               onFocus={stopPropagation}
+              className="w-full"
             />
             <Input
               type="number"
@@ -203,11 +202,14 @@ export default function MusicCard({
               placeholder="Visualizações"
               onClick={stopPropagation}
               onFocus={stopPropagation}
+              className="w-full"
             />
           </div>
         ) : (
           <>
-            <h3 className="font-semibold text-foreground">{musica.titulo}</h3>
+            <h3 className="font-semibold text-foreground text-base sm:text-lg">
+              {musica.titulo}
+            </h3>
             <p className="text-sm text-muted-foreground">
               {musica.visualizacoes.toLocaleString()} visualizações
             </p>
@@ -215,9 +217,12 @@ export default function MusicCard({
         )}
       </div>
 
-      {/* Botões de ação */}
+      {/* Botões de ação responsivos */}
       {canEdit && (
-        <div className="flex gap-2 ml-4" onClick={stopPropagation}>
+        <div
+          className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-4 sm:mt-0"
+          onClick={stopPropagation}
+        >
           {isEditing ? (
             <>
               <Button
@@ -226,8 +231,10 @@ export default function MusicCard({
                   onSave(musica.id);
                 }}
                 size="sm"
+                className="flex-1 sm:flex-none"
               >
-                Salvar
+                <span className="hidden sm:inline">Salvar</span>
+                <span className="sm:hidden">✓</span>
               </Button>
               <Button
                 onClick={(e) => {
@@ -236,8 +243,10 @@ export default function MusicCard({
                 }}
                 variant="outline"
                 size="sm"
+                className="flex-1 sm:flex-none"
               >
-                Cancelar
+                <span className="hidden sm:inline">Cancelar</span>
+                <span className="sm:hidden">✕</span>
               </Button>
             </>
           ) : (
@@ -249,8 +258,10 @@ export default function MusicCard({
                 }}
                 variant="outline"
                 size="sm"
+                className="px-2 sm:px-3"
               >
-                Editar
+                <span className="hidden sm:inline mr-1">Editar</span>
+                <span>✏️</span>
               </Button>
               <Button
                 onClick={(e) => {
@@ -259,20 +270,23 @@ export default function MusicCard({
                 }}
                 variant="destructive"
                 size="sm"
+                className="px-2 sm:px-3"
               >
-                Excluir
+                <span className="hidden sm:inline mr-1">Excluir</span>
+                <span>🗑️</span>
               </Button>
             </>
           )}
         </div>
       )}
 
-      {!isEditing && ( // Só mostra o link do YouTube quando não está editando
+      {!isEditing && (
         <div
-          className="text-primary opacity-0 group-hover:opacity-100 transition-opacity ml-4 cursor-pointer"
+          className="text-primary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer mt-4 sm:mt-0 sm:ml-4"
           onClick={openYouTube}
         >
-          ▶
+          <span className="hidden sm:inline">Assistir</span>
+          <span className="sm:hidden">▶</span>
         </div>
       )}
     </div>
