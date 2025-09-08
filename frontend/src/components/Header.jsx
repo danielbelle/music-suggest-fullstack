@@ -46,7 +46,7 @@ export function Header() {
   const isProfilePage = location.pathname === "/profile";
 
   return (
-    <header className="border-b bg-card sticky top-0 z-10">
+    <header className="border-b bg-card sticky top-0 z-11">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo e Título */}
         <div className="flex items-center gap-2">
