@@ -126,6 +126,25 @@ docker run --rm -v "%cd%":/work -w /work alpine:latest sh -c "apk add --no-cache
 docker-compose down -v
 ```
 
+### Credenciais Padrão
+
+- **Email:** root@root.com
+- **Senha:** root1234
+
+---
+
+## 🧪 Executando Testes
+
+Os testes estão limitados, apenas estão configurados e testes básicos
+
+```bash
+# Testes backend
+docker-compose exec backend php artisan test
+
+# Testes frontend
+docker-compose exec frontend npm test
+```
+
 Dicas rápidas
 
 - Se algo não subir, verifique o status e os logs dos serviços: docker-compose
@@ -155,7 +174,6 @@ top5-tiao-carreiro-v2/
 │   └── default.conf
 ├── docker-compose.yml
 ├── Makefile
-├── .env
 └── README.md
 ```
 
@@ -210,35 +228,12 @@ top5-tiao-carreiro-v2/
 - [ ] v7.3: Scripts de build e deploy
 - [ ] v7.4: Testes finais e ajustes
 
-## 🐳 Como Executar o Projeto
+### Sprint 8: Futuras implementações
 
-### ⚠️ Atenção para usuários Windows
-
-> **IMPORTANTE:**  
-> Sempre execute os comandos Docker (como `docker-compose up`,
-> `docker-compose exec`, etc) pelo **CMD** ou **PowerShell** do Windows, e
-> **NÃO** pelo Git Bash ou WSL!  
-> Isso garante que os caminhos relativos dos volumes funcionem corretamente no
-> Docker.
-
----
-
-### Credenciais Padrão
-
-- **Email:**
-- **Senha:**
-
----
-
-## 🧪 Executando Testes
-
-```bash
-# Testes backend
-docker-compose exec backend php artisan test
-
-# Testes frontend
-docker-compose exec frontend npm test
-```
+- [ ] v8.1: Testes
+- [ ] v8.2:
+- [ ] v7.3:
+- [ ] v7.4:
 
 ---
 

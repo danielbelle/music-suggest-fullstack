@@ -42,7 +42,7 @@ class SugestaoController extends Controller
             'email_usuario' => 'nullable|email|max:255',
         ]);
 
-        // ✅ VERIFICAÇÃO MANUAL do usuário autenticado via token Sanctum
+        //  VERIFICAÇÃO MANUAL do usuário autenticado via token Sanctum
         $user = null;
         if ($request->bearerToken()) {
             try {
