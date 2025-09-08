@@ -20,9 +20,20 @@ export default function MusicCard({
     e.preventDefault();
   };
 
+  // Função para abrir o YouTube
+  const openYouTube = () => {
+    window.open(
+      `https://www.youtube.com/watch?v=${musica.youtube_id}`,
+      "_blank"
+    );
+  };
+
   if (compact) {
     return (
-      <div className="bg-muted rounded-lg p-3 hover:bg-accent transition-colors border group relative">
+      <div
+        className="bg-muted rounded-lg p-3 hover:bg-accent transition-colors border group relative cursor-pointer"
+        onClick={!isEditing ? openYouTube : undefined} // Só é clicável quando não está editando
+      >
         {/* Botões de edição para usuários autenticados */}
         {canEdit && (
           <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -41,7 +52,7 @@ export default function MusicCard({
                 <Button
                   onClick={(e) => {
                     stopPropagation(e);
-                    onEditFormChange({});
+                    if (onEdit) onEdit(null);
                   }}
                   variant="outline"
                   size="sm"
@@ -79,77 +90,81 @@ export default function MusicCard({
           </div>
         )}
 
-        <a
-          href={`https://www.youtube.com/watch?v=${musica.youtube_id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <div className="flex flex-col h-full">
-            <img
-              src={musica.thumb}
-              alt={musica.titulo}
-              className="w-full h-32 rounded-lg object-cover mb-3"
-            />
+        {/* REMOVIDO o link <a> que envolvia tudo */}
+        <div className="flex flex-col h-full">
+          <img
+            src={musica.thumb}
+            alt={musica.titulo}
+            className="w-full h-32 rounded-lg object-cover mb-3"
+          />
 
-            <div className="flex-1 min-w-0">
-              {isEditing ? (
-                <div className="space-y-2" onClick={stopPropagation}>
-                  <Input
-                    value={editForm.titulo || ""}
-                    onChange={(e) =>
-                      onEditFormChange({
-                        ...editForm,
-                        titulo: e.target.value,
-                      })
-                    }
-                    placeholder="Título"
-                    className="text-sm"
-                    onClick={stopPropagation}
-                  />
-                  <Input
-                    type="number"
-                    value={editForm.visualizacoes || ""}
-                    onChange={(e) =>
-                      onEditFormChange({
-                        ...editForm,
-                        visualizacoes: e.target.value,
-                      })
-                    }
-                    placeholder="Visualizações"
-                    className="text-sm"
-                    onClick={stopPropagation}
-                  />
-                </div>
-              ) : (
-                <>
-                  <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary mb-1">
-                    {musica.titulo}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    {musica.visualizacoes.toLocaleString()} views
-                  </p>
-                </>
-              )}
-            </div>
+          <div className="flex-1 min-w-0">
+            {isEditing ? (
+              <div className="space-y-2" onClick={stopPropagation}>
+                <Input
+                  value={editForm.titulo || ""}
+                  onChange={(e) =>
+                    onEditFormChange({
+                      ...editForm,
+                      titulo: e.target.value,
+                    })
+                  }
+                  placeholder="Título"
+                  className="text-sm"
+                  onClick={stopPropagation}
+                  onFocus={stopPropagation}
+                />
+                <Input
+                  type="number"
+                  value={editForm.visualizacoes || ""}
+                  onChange={(e) =>
+                    onEditFormChange({
+                      ...editForm,
+                      visualizacoes: e.target.value,
+                    })
+                  }
+                  placeholder="Visualizações"
+                  className="text-sm"
+                  onClick={stopPropagation}
+                  onFocus={stopPropagation}
+                />
+              </div>
+            ) : (
+              <>
+                <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary mb-1">
+                  {musica.titulo}
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  {musica.visualizacoes.toLocaleString()} views
+                </p>
+              </>
+            )}
+          </div>
 
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-xs text-muted-foreground">
-                Posição #{index + 1}
-              </span>
-              <div className="text-primary opacity-0 group-hover:opacity-100 transition-opacity text-sm">
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-xs text-muted-foreground">
+              Posição #{index + 1}
+            </span>
+            {!isEditing && ( // Só mostra o ícone do YouTube quando não está editando
+              <div
+                className="text-primary opacity-0 group-hover:opacity-100 transition-opacity text-sm cursor-pointer"
+                onClick={openYouTube}
+              >
                 ▶
               </div>
-            </div>
+            )}
           </div>
-        </a>
+        </div>
       </div>
     );
   }
 
   // Para o layout não compact (top 5)
   return (
-    <div className="flex items-center bg-muted rounded-lg p-4 hover:bg-accent transition-colors border group relative">
+    <div
+      className="flex items-center bg-muted rounded-lg p-4 hover:bg-accent transition-colors border group relative cursor-pointer"
+      onClick={!isEditing ? openYouTube : undefined} // Só é clicável quando não está editando
+    >
       {/* Número da posição */}
       <div className="text-2xl font-bold text-primary w-10 text-center">
         {index + 1}
@@ -174,6 +189,7 @@ export default function MusicCard({
               }
               placeholder="Título"
               onClick={stopPropagation}
+              onFocus={stopPropagation}
             />
             <Input
               type="number"
@@ -186,6 +202,7 @@ export default function MusicCard({
               }
               placeholder="Visualizações"
               onClick={stopPropagation}
+              onFocus={stopPropagation}
             />
           </div>
         ) : (
@@ -200,7 +217,7 @@ export default function MusicCard({
 
       {/* Botões de ação */}
       {canEdit && (
-        <div className="flex gap-2 ml-4">
+        <div className="flex gap-2 ml-4" onClick={stopPropagation}>
           {isEditing ? (
             <>
               <Button
@@ -215,7 +232,7 @@ export default function MusicCard({
               <Button
                 onClick={(e) => {
                   stopPropagation(e);
-                  onEditFormChange({});
+                  if (onEdit) onEdit(null);
                 }}
                 variant="outline"
                 size="sm"
@@ -250,15 +267,14 @@ export default function MusicCard({
         </div>
       )}
 
-      <a
-        href={`https://www.youtube.com/watch?v=${musica.youtube_id}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-primary opacity-0 group-hover:opacity-100 transition-opacity ml-4"
-        onClick={stopPropagation}
-      >
-        ▶
-      </a>
+      {!isEditing && ( // Só mostra o link do YouTube quando não está editando
+        <div
+          className="text-primary opacity-0 group-hover:opacity-100 transition-opacity ml-4 cursor-pointer"
+          onClick={openYouTube}
+        >
+          ▶
+        </div>
+      )}
     </div>
   );
 }

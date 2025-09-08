@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useOptimisticUpdate } from "@/hooks/useOptimisticUpdate";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import api from "@/services/api"; // ✅ ADICIONAR ESTA IMPORTACAO
 
 export default function SuggestionsManagement({
   suggestions,
@@ -8,7 +11,51 @@ export default function SuggestionsManagement({
   onSuggestionAction,
   onRefresh,
 }) {
-  if (loading) {
+  const [message, setMessage] = useState(null);
+  const { optimisticUpdate, commitUpdate, rollbackUpdate } =
+    useOptimisticUpdate();
+
+  const handleAction = async (sugestaoId, action) => {
+    try {
+      // ✅ Atualização otimista
+      const updatedSuggestions = optimisticUpdate(
+        sugestaoId,
+        { status: action === "approve" ? "aprovada" : "rejeitada" },
+        suggestions
+      );
+      onRefresh(updatedSuggestions);
+
+      // ✅ API call - CORRIGIDO: usando api importado
+      if (action === "approve") {
+        await api.patch(`/sugestoes/${sugestaoId}/aprovar`);
+      } else {
+        await api.patch(`/sugestoes/${sugestaoId}/reprovar`);
+      }
+
+      // ✅ Confirma
+      commitUpdate(sugestaoId);
+
+      setMessage({
+        type: "success",
+        text: `Sugestão ${
+          action === "approve" ? "aprovada" : "rejeitada"
+        } com sucesso!`,
+      });
+    } catch (error) {
+      console.error("Erro ao processar sugestão:", error);
+
+      // ✅ Rollback
+      const rolledBackSuggestions = rollbackUpdate(sugestaoId, suggestions);
+      onRefresh(rolledBackSuggestions);
+
+      setMessage({
+        type: "error",
+        text: "Erro ao processar sugestão. Tente novamente.",
+      });
+    }
+  };
+
+  if (loading && suggestions.length === 0) {
     return <div className="text-center py-8">Carregando sugestões...</div>;
   }
 
@@ -22,9 +69,18 @@ export default function SuggestionsManagement({
 
   return (
     <div className="space-y-4">
+      {message && (
+        <Alert
+          variant={message.type === "error" ? "destructive" : "default"}
+          className="mb-4"
+        >
+          <AlertDescription>{message.text}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Sugestões Pendentes</h3>
-        <Button onClick={onRefresh} variant="outline" size="sm">
+        <Button onClick={() => onRefresh()} variant="outline" size="sm">
           Atualizar
         </Button>
       </div>
@@ -50,18 +106,20 @@ export default function SuggestionsManagement({
 
             <div className="flex gap-2">
               <Button
-                onClick={() => onSuggestionAction(sugestao.id, "approve")}
+                onClick={() => handleAction(sugestao.id, "approve")}
                 variant="default"
                 size="sm"
+                disabled={sugestao.status === "aprovada"}
               >
-                Aprovar
+                {sugestao.status === "aprovada" ? "Aprovado" : "Aprovar"}
               </Button>
               <Button
-                onClick={() => onSuggestionAction(sugestao.id, "reject")}
+                onClick={() => handleAction(sugestao.id, "reject")}
                 variant="destructive"
                 size="sm"
+                disabled={sugestao.status === "rejeitada"}
               >
-                Reprovar
+                {sugestao.status === "rejeitada" ? "Rejeitado" : "Reprovar"}
               </Button>
             </div>
           </div>

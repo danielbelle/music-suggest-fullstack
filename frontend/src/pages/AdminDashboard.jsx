@@ -88,12 +88,11 @@ export default function AdminDashboard() {
                   onRefresh={fetchData}
                 />
               </TabsContent>
-
               <TabsContent value="musics">
                 <MusicManagement
                   musicas={musicas}
                   loading={loading}
-                  onRefresh={fetchData}
+                  onRefresh={fetchMusicas}
                 />
               </TabsContent>
             </Tabs>

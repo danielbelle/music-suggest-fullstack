@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import MusicCard from "@/components/music/MusicCard"; // ✅ Alterado para MusicCard
+import MusicCard from "@/components/music/MusicCard";
 import SuggestionForm from "@/components/music/SuggestionForm";
-import { Button } from "@/components/ui/button"; // ✅ Adicionado para botão de refresh
-import Pagination from "@/components/ui/pagination"; // ✅ Adicionado para paginação
+import { Button } from "@/components/ui/button";
+import Pagination from "@/components/ui/pagination";
+import { useOptimisticUpdate } from "@/hooks/useOptimisticUpdate";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function TopMusicas() {
   const { user } = useAuth();
@@ -21,8 +23,12 @@ export default function TopMusicas() {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
-  const [currentPage, setCurrentPage] = useState(1); // ✅ Adicionado estado de página
-  const itemsPerPage = 8; // ✅ Itens por página
+  const [currentPage, setCurrentPage] = useState(1);
+  const [message, setMessage] = useState(null);
+  const itemsPerPage = 8;
+
+  const { optimisticUpdate, optimisticDelete, commitUpdate, rollbackUpdate } =
+    useOptimisticUpdate();
 
   useEffect(() => {
     fetchMusicas();
@@ -42,6 +48,11 @@ export default function TopMusicas() {
   };
 
   const handleEdit = (musica) => {
+    if (musica === null) {
+      setEditingId(null);
+      return;
+    }
+
     if (!musica || !musica.id) {
       console.error("Música inválida para edição:", musica);
       return;
@@ -56,43 +67,76 @@ export default function TopMusicas() {
 
   const handleSave = async (musicaId) => {
     try {
-      const musicaIndex = top5.findIndex((m) => m.id === musicaId);
-      if (musicaIndex !== -1) {
-        const updatedMusicas = [...top5];
-        updatedMusicas[musicaIndex] = {
-          ...updatedMusicas[musicaIndex],
-          ...editForm,
-        };
-        setTop5(updatedMusicas);
-      }
-
-      await api.put(`/musicas/${musicaId}`, editForm);
+      //  Atualização otimista
+      const updatedMusicas = optimisticUpdate(musicaId, editForm, top5);
+      setTop5(updatedMusicas);
       setEditingId(null);
+
+      //  API call em segundo plano
+      await api.put(`/musicas/${musicaId}`, editForm);
+
+      //  Confirma a atualização
+      commitUpdate(musicaId);
+
+      setMessage({
+        type: "success",
+        text: "Música atualizada com sucesso!",
+      });
     } catch (error) {
       console.error("Erro ao atualizar música:", error);
-      fetchMusicas();
-      alert("Erro ao salvar. Os dados foram restaurados.");
+
+      //  Rollback em caso de erro
+      const rolledBackMusicas = rollbackUpdate(musicaId, top5);
+      setTop5(rolledBackMusicas);
+
+      setMessage({
+        type: "error",
+        text: "Erro ao salvar. Alterações revertidas.",
+      });
     }
   };
 
   const handleDelete = async (musicaId) => {
-    if (window.confirm("Tem certeza que deseja excluir esta música?")) {
-      try {
-        setTop5((prev) => prev.filter((m) => m.id !== musicaId));
-        await api.delete(`/musicas/${musicaId}`);
-      } catch (error) {
-        console.error("Erro ao excluir música:", error);
-        fetchMusicas();
-        if (error.response?.status === 401) {
-          alert("Você não tem permissão para excluir esta música.");
-        } else {
-          alert("Erro ao excluir música. Tente novamente.");
-        }
+    if (!window.confirm("Tem certeza que deseja excluir esta música?")) return;
+
+    try {
+      //  Deleção otimista
+      const updatedMusicas = optimisticDelete(musicaId, top5);
+      setTop5(updatedMusicas);
+
+      //  API call em segundo plano
+      await api.delete(`/musicas/${musicaId}`);
+
+      //  Confirma a deleção
+      commitUpdate(musicaId);
+
+      setMessage({
+        type: "success",
+        text: "Música excluída com sucesso!",
+      });
+    } catch (error) {
+      console.error("Erro ao excluir música:", error);
+
+      //  Rollback em caso de erro
+      const rolledBackMusicas = rollbackUpdate(musicaId, top5);
+      setTop5(rolledBackMusicas);
+
+      if (error.response?.status === 401) {
+        setMessage({
+          type: "error",
+          text: "Você não tem permissão para excluir esta música.",
+        });
+      } else {
+        setMessage({
+          type: "error",
+          text: "Erro ao excluir música. Tente novamente.",
+        });
       }
     }
   };
 
   const handleSuggestionAdded = () => {
+    // Para sugestões, ainda precisamos recarregar pois pode adicionar nova música
     fetchMusicas();
   };
 
@@ -100,7 +144,7 @@ export default function TopMusicas() {
     setCurrentPage(page);
   };
 
-  // ✅ Cálculo das músicas paginadas
+  // Cálculo das músicas paginadas
   const top5Musicas = top5.slice(0, 5);
   const remainingMusicas = top5.slice(5);
   const totalItems = remainingMusicas.length;
@@ -110,7 +154,7 @@ export default function TopMusicas() {
   const paginatedMusicas = remainingMusicas.slice(startIndex, endIndex);
   const showPagination = totalItems > itemsPerPage;
 
-  if (loading) {
+  if (loading && top5.length === 0) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
@@ -127,6 +171,15 @@ export default function TopMusicas() {
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+        {message && (
+          <Alert
+            variant={message.type === "error" ? "destructive" : "default"}
+            className="mb-4"
+          >
+            <AlertDescription>{message.text}</AlertDescription>
+          </Alert>
+        )}
+
         {/* Header Principal */}
         <Card className="mb-8 text-center">
           <CardHeader>
