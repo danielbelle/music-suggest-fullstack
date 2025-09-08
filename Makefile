@@ -20,6 +20,7 @@ finish:
 	@docker stop $(frontend) $(backend) $(db) $(nginx) 2>/dev/null || true
 	@echo "Finalizando containers e removendo volumes..."
 	docker-compose down -v
+	@$(MAKE) testfim
 	@$(MAKE) on
 	@echo "Finalizado."
 	
@@ -153,3 +154,11 @@ verificationOS:
 		read -r _; \
 	fi
 
+testb:
+	docker-compose exec backend composer test
+
+testf:
+	docker-compose exec frontend npm test
+
+testfim:
+	docker-compose exec backend composer test && docker-compose exec frontend npm test

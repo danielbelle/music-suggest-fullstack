@@ -66,5 +66,31 @@ services:
       timeout: 10s
       retries: 5
 
+  backend-test:
+    build: ./backend
+    container_name: laravel-test
+    volumes:
+      - ./backend:/var/www
+    working_dir: /var/www
+    command: ["composer", "test"]
+    environment:
+      APP_ENV: testing
+      DB_CONNECTION: sqlite
+      DB_DATABASE: memory
+    depends_on:
+      - db
+
+  frontend-test:
+    build: ./frontend
+    container_name: react-test
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    working_dir: /app
+    command: ["npm", "test", "--", "--watchAll=false"]
+    environment:
+      - CI=true
+    depends_on:
+      - backend
 volumes:
   dbdata:

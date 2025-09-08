@@ -72,8 +72,8 @@ top5-tiao-carreiro-v2/
 
 ### Sprint 6: Testes Automatizados
 
-- [ ] v6.1: Testes unitários Laravel
-- [ ] v6.2: Testes de API com PHPUnit
+- [x] v6.1: Testes unitários Laravel
+- [x] v6.2: Testes de API com PHPUnit
 - [ ] v6.3: Testes de componentes React
 - [ ] v6.4: Testes e2e com Cypress
 
@@ -145,7 +145,7 @@ docker-compose exec backend php artisan migrate --seed
 
 - **Frontend:** http://localhost:3000
 - **Backend:** http://localhost:9000
-- **Adminer:** http://localhost:8080
+- **Adminer:** http://localhost:3306
 
 ### Credenciais Padrão
 
