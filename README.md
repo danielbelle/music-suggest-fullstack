@@ -1,7 +1,86 @@
 # 🎵 Top 5 - Tião Carreiro e Pardinho (v2.0)
 
-Sistema web para exibir as 5 músicas mais tocadas da dupla caipira Tião Carreiro
-e Pardinho, permitindo sugestões de novas músicas via YouTube.
+## Instruções rápidas para uma máquina limpa (sem nada instalado)
+
+Siga estes passos para clonar e executar o projeto mesmo que você não tenha
+ferramentas instaladas localmente.
+
+Requisitos mínimos
+
+- Docker Desktop (Windows / macOS / Linux) — inclui Docker Engine e Docker
+  Compose.
+  - Windows: instalar Docker Desktop e executar Docker Desktop antes de
+    prosseguir.
+- Git
+- (Opcional) make — facilita comandos automatizados; não é obrigatório.
+
+Importante (Windows)
+
+- Execute os comandos Docker pelo PowerShell ou CMD do Windows. Não use Git Bash
+  para levantar os containers porque volumes com caminhos do Windows podem
+  falhar.
+
+1. Clonar o repositório
+
+```powershell
+git clone https://github.com/danielbelle/music-suggest-fullstack.git
+cd music-suggest-fullstack
+```
+
+2. Usando o Makefile (se você tiver make instalado)
+
+```powershell
+# comando único (Makefile já encapsula build, wait, migrate e seed)
+make start
+```
+
+3. Sem Make (passo a passo manual)
+
+```powershell
+# Build e sobe todos os serviços em background
+docker-compose up -d --build
+
+# Instalar dependências (apenas se necessário)
+docker-compose exec backend composer install
+docker-compose exec frontend npm install
+
+# Rodar migrations e seed
+docker-compose exec backend php artisan migrate --seed
+
+# Ver logs (se necessário)
+docker-compose logs -f
+```
+
+4. Alternativa: executar targets do Make dentro de um container (se não tiver
+   make no host)
+
+```powershell
+# no Windows CMD/PowerShell (usa imagem Alpine temporária)
+docker run --rm -v "%cd%":/work -w /work alpine:latest sh -c "apk add --no-cache make && make start"
+```
+
+5. URLs locais padrão
+
+- Frontend: http://localhost:3000
+- Backend (NGINX): http://localhost:9000
+
+6. Parar e remover containers/volumes
+
+```powershell
+docker-compose down -v
+```
+
+Dicas rápidas
+
+- Se algo não subir, verifique o status e os logs dos serviços: docker-compose
+  ps / docker-compose logs -f backend
+- Se o projeto tiver arquivo backend/.env.example, copie para backend/.env e
+  ajuste valores sensíveis antes de rodar (ou use variáveis de ambiente).
+- Testes:
+  - Backend: docker-compose exec backend php artisan test
+  - Frontend: docker-compose exec frontend npm test
+
+---
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -79,7 +158,7 @@ top5-tiao-carreiro-v2/
 
 ### Sprint 7: Polimento e Deploy
 
-- [ ] v7.1: Documentação completa
+- [x] v7.1: Documentação completa
 - [ ] v7.2: Variáveis de ambiente exemplos
 - [ ] v7.3: Scripts de build e deploy
 - [ ] v7.4: Testes finais e ajustes
