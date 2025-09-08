@@ -2,7 +2,7 @@
 
 ## 🖼️ Tela cheia (Preview)
 
-![Frontend - fullscreen](frontend/fullscreen.png)
+![Frontend - fullscreen](https://raw.githubusercontent.com/danielbelle/music-suggest-fullstack/main/frontend/fullscreen.png)
 
 ## 🎯 Objetivo do Projeto## 🚀 Tecnologias Utilizadas
 
