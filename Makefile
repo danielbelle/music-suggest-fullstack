@@ -8,6 +8,7 @@ start:
 	@$(MAKE) verificationOS
 	@$(MAKE) up
 	@$(MAKE) wait-db
+	@$(MAKE) testfim
 	@$(MAKE) migrate
 	@$(MAKE) seed
 	@$(MAKE) urls
@@ -161,4 +162,5 @@ testf:
 	docker-compose exec frontend npm test
 
 testfim:
-	docker-compose exec backend composer test && docker-compose exec frontend npm test
+	docker-compose stop backend-test frontend-test
+	docker-compose rm -f backend-test frontend-test

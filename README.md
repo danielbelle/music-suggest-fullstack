@@ -1,5 +1,25 @@
 # 🎵 Top 5 - Tião Carreiro e Pardinho (v2.0)
 
+## 🖼️ Tela cheia (Preview)
+
+![Frontend - fullscreen](frontend/fullscreen.png)
+
+## 🎯 Objetivo do Projeto## 🚀 Tecnologias Utilizadas
+
+Criar uma aplicação full‑stack para catalogar e gerenciar as Top 5 músicas de
+Tião Carreiro e Pardinho v2.0. O sistema expõe uma API RESTful (Laravel)
+consumida por um frontend React responsivo, opera em containers Docker para
+fácil reprodução do ambiente e inclui autenticação (Sanctum) e testes
+automatizados para garantir segurança, qualidade e facilidade de manutenção e
+deploy.
+
+- **Backend**: Laravel 11.x, PHP 8.2+
+- **Frontend**: React 18.x, tailwindcss v4.1
+- **Database**: MySQL 8.0
+- **Container**: Docker + Docker Compose
+- **Auth**: Laravel Sanctum
+- **Testing**: PHPUnit, Jest + React Testing Library
+
 ## Instruções rápidas para uma máquina limpa (sem nada instalado)
 
 Siga estes passos para clonar e executar o projeto mesmo que você não tenha
@@ -26,90 +46,18 @@ git clone https://github.com/danielbelle/music-suggest-fullstack.git
 cd music-suggest-fullstack
 ```
 
-## Criar os arquivos .env e .env.test
+2. Criar os arquivos .env e
 
-Copie os exemplos e ajuste os valores conforme necessário. Abaixo há templates
-mínimos recomendados — salve nos caminhos indicados.
+Altere o backend/env.exemple para backend/.env
 
-backend/.env (Laravel)
+Para gerar sua api key laravel:
 
-execute o comando docker-compose exec backend php artisan key:generate para
-gerar sua api key laravel
+docker-compose exec backend php artisan key:generate para
 
 ```env
-APP_KEY=ADICIONAR-KEY
-
-APP_NAME="Top5 Music"
-APP_ENV=local
-APP_DEBUG=true
-APP_TIMEZONE=UTC
-APP_URL=http://localhost:9000
-
-SANCTUM_STATEFUL_DOMAINS=localhost,localhost:3000,localhost:5173,127.0.0.1
-SESSION_DRIVER=cookie
-SESSION_SECURE_COOKIE=false
-SESSION_DOMAIN=localhost
-SESSION_SAME_SITE=lax
-
-APP_LOCALE=en
-APP_FALLBACK_LOCALE=en
-APP_FAKER_LOCALE=en_US
-
-APP_MAINTENANCE_DRIVER=file
-
-PHP_CLI_SERVER_WORKERS=4
-
-BCRYPT_ROUNDS=12
-
-LOG_CHANNEL=stack
-LOG_STACK=single
-LOG_DEPRECATIONS_CHANNEL=null
-LOG_LEVEL=debug
-
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=top5
-DB_USERNAME=user
-DB_PASSWORD=secret
-
-SESSION_LIFETIME=120
-SESSION_ENCRYPT=false
-SESSION_PATH=/
-
-BROADCAST_CONNECTION=log
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=sync
-
-CACHE_DRIVER=file
-CACHE_PREFIX=
-
-MEMCACHED_HOST=127.0.0.1
-
-REDIS_CLIENT=phpredis
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-
-MAIL_MAILER=log
-MAIL_SCHEME=null
-MAIL_HOST=127.0.0.1
-MAIL_PORT=2525
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_FROM_ADDRESS="hello@example.com"
-MAIL_FROM_NAME="${APP_NAME}"
-
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-AWS_USE_PATH_STYLE_ENDPOINT=false
-
-VITE_APP_NAME="${APP_NAME}"
-
+APP_KEY=ADICIONAR-KEY-AQUI
+...
 ```
-
 
 Comandos úteis
 
@@ -124,7 +72,7 @@ docker-compose run --rm backend php artisan key:generate
 # se usar sqlite in-memory, não precisa de arquivo físico
 ```
 
-2. Usando o Makefile (se você tiver make instalado)
+3. Usando o Makefile (se você tiver make instalado)
 
 ```powershell
 # comando único (Makefile já encapsula build, wait, migrate e seed)
@@ -140,7 +88,7 @@ make testf
 make testb
 ```
 
-3. Sem Make (passo a passo manual)
+4. Sem Make (passo a passo manual)
 
 ```powershell
 # Build e sobe todos os serviços em background
@@ -159,7 +107,7 @@ docker-compose exec backend php artisan migrate --seed
 docker-compose logs -f
 ```
 
-4. Alternativa: executar targets do Make dentro de um container (se não tiver
+5. Alternativa: executar targets do Make dentro de um container (se não tiver
    make no host)
 
 ```powershell
@@ -167,12 +115,12 @@ docker-compose logs -f
 docker run --rm -v "%cd%":/work -w /work alpine:latest sh -c "apk add --no-cache make && make start"
 ```
 
-5. URLs locais padrão
+6. URLs locais padrão
 
 - Frontend: http://localhost:3000
 - Backend (NGINX): http://localhost:9000
 
-6. Parar e remover containers/volumes
+7. Parar e remover containers/volumes
 
 ```powershell
 docker-compose down -v
@@ -189,15 +137,6 @@ Dicas rápidas
   - Frontend: docker-compose exec frontend npm test
 
 ---
-
-## 🚀 Tecnologias Utilizadas
-
-- **Backend**: Laravel 11.x, PHP 8.2+
-- **Frontend**: React 18.x, tailwindcss v4.1
-- **Database**: MySQL 8.0
-- **Container**: Docker + Docker Compose
-- **Auth**: Laravel Sanctum
-- **Testing**: PHPUnit, Jest + React Testing Library
 
 ## 📋 Sprint Planning
 
@@ -262,7 +201,7 @@ top5-tiao-carreiro-v2/
 - [x] v6.1: Testes unitários Laravel
 - [x] v6.2: Testes de API com PHPUnit
 - [x] v6.3: Testes de componentes React
-- [ ] v6.4: Testes e2e com Cypress
+- [x] v6.4: Testes Jest
 
 ### Sprint 7: Polimento e Deploy
 
