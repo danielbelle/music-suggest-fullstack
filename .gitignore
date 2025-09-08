@@ -24,5 +24,6 @@ yarn-error.log
 
 *vendor
 cookies.txt
-.env.testing
-.env.testing*
+.env*
+!.env.example
+!.env.testing.example

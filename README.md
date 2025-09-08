@@ -31,9 +31,10 @@ cd music-suggest-fullstack
 Copie os exemplos e ajuste os valores conforme necessário. Abaixo há templates
 mínimos recomendados — salve nos caminhos indicados.
 
-root .env (para docker-compose)
-
 backend/.env (Laravel)
+
+execute o comando docker-compose exec backend php artisan key:generate para
+gerar sua api key laravel
 
 ```env
 APP_KEY=ADICIONAR-KEY
@@ -109,29 +110,12 @@ VITE_APP_NAME="${APP_NAME}"
 
 ```
 
-backend/.env.test (Laravel — execução de testes)
-
-```env
-APP_KEY=ADICIONARKEY
-
-APP_ENV=testing
-APP_DEBUG=true
-
-DB_CONNECTION=sqlite
-DB_DATABASE=memory
-
-CACHE_DRIVER=array
-SESSION_DRIVER=array
-QUEUE_DRIVER=sync
-
-```
 
 Comandos úteis
 
 ```powershell
 # copiar exemplos (se houver .env.example)
-cp .env.example .env
-cp backend/.env.example backend/.env
+cp  backend/.env
 
 # gerar APP_KEY dentro do container Laravel
 docker-compose run --rm backend php artisan key:generate
@@ -299,56 +283,6 @@ top5-tiao-carreiro-v2/
 > Docker.
 
 ---
-
-### Pré-requisitos
-
-- Docker e Docker Compose
-- Git
-
-### Passo a Passo
-
-1. **Clone o repositório**
-
-```bash
-git clone https://github.com/seu-usuario/top5-tiao-carreiro-v2.git
-cd top5-tiao-carreiro-v2
-```
-
-## ⚙️ Configuração do Projeto
-
-### Configure as variáveis de ambiente
-
-```bash
-cp backend/.env
-```
-
-### Execute os containers
-
-```bash
-docker-compose up -d
-```
-
-### Instale as dependências
-
-```bash
-# Backend
-docker-compose exec backend composer install
-
-# Frontend
-docker-compose exec frontend npm install
-```
-
-### Configure o banco de dados
-
-```bash
-docker-compose exec backend php artisan migrate --seed
-```
-
-### Acesse a aplicação
-
-- **Frontend:** http://localhost:3000
-- **Backend:** http://localhost:9000
-- **Adminer:** http://localhost:3306
 
 ### Credenciais Padrão
 
