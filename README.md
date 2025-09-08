@@ -74,8 +74,8 @@ top5-tiao-carreiro-v2/
 
 - [x] v6.1: Testes unitários Laravel
 - [x] v6.2: Testes de API com PHPUnit
-- [ ] v6.3: Testes de componentes React
-- [ ] v6.4: Testes e2e com Cypress
+- [x] v6.3: Testes de componentes React
+- [] v6.4: Testes e2e com Cypress
 
 ### Sprint 7: Polimento e Deploy
 
