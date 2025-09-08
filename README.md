@@ -14,11 +14,10 @@ Requisitos mínimos
 - Git
 - (Opcional) make — facilita comandos automatizados; não é obrigatório.
 
-Importante (Windows)
-
-- Execute os comandos Docker pelo PowerShell ou CMD do Windows. Não use Git Bash
-  para levantar os containers porque volumes com caminhos do Windows podem
-  falhar.
+> ⚠️ **Atenção**  
+> Execute os comandos Docker pelo PowerShell ou CMD do Windows. Não use o Git
+> Bash para levantar os containers — volumes com caminhos do Windows podem
+> falhar.
 
 1. Clonar o repositório
 
@@ -27,11 +26,134 @@ git clone https://github.com/danielbelle/music-suggest-fullstack.git
 cd music-suggest-fullstack
 ```
 
+## Criar os arquivos .env e .env.test
+
+Copie os exemplos e ajuste os valores conforme necessário. Abaixo há templates
+mínimos recomendados — salve nos caminhos indicados.
+
+root .env (para docker-compose)
+
+backend/.env (Laravel)
+
+```env
+APP_KEY=ADICIONAR-KEY
+
+APP_NAME="Top5 Music"
+APP_ENV=local
+APP_DEBUG=true
+APP_TIMEZONE=UTC
+APP_URL=http://localhost:9000
+
+SANCTUM_STATEFUL_DOMAINS=localhost,localhost:3000,localhost:5173,127.0.0.1
+SESSION_DRIVER=cookie
+SESSION_SECURE_COOKIE=false
+SESSION_DOMAIN=localhost
+SESSION_SAME_SITE=lax
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+
+PHP_CLI_SERVER_WORKERS=4
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=top5
+DB_USERNAME=user
+DB_PASSWORD=secret
+
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+
+CACHE_DRIVER=file
+CACHE_PREFIX=
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=log
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+
+```
+
+backend/.env.test (Laravel — execução de testes)
+
+```env
+APP_KEY=ADICIONARKEY
+
+APP_ENV=testing
+APP_DEBUG=true
+
+DB_CONNECTION=sqlite
+DB_DATABASE=memory
+
+CACHE_DRIVER=array
+SESSION_DRIVER=array
+QUEUE_DRIVER=sync
+
+```
+
+Comandos úteis
+
+```powershell
+# copiar exemplos (se houver .env.example)
+cp .env.example .env
+cp backend/.env.example backend/.env
+
+# gerar APP_KEY dentro do container Laravel
+docker-compose run --rm backend php artisan key:generate
+
+# rodar testes com .env.test (Laravel usa .env.testing por padrão)
+# se usar sqlite in-memory, não precisa de arquivo físico
+```
+
 2. Usando o Makefile (se você tiver make instalado)
 
 ```powershell
 # comando único (Makefile já encapsula build, wait, migrate e seed)
 make start
+
+# para finalizar containers
+make finish
+
+# para testes frontend
+make testf
+
+# para testes backend
+make testb
 ```
 
 3. Sem Make (passo a passo manual)
@@ -39,6 +161,8 @@ make start
 ```powershell
 # Build e sobe todos os serviços em background
 docker-compose up -d --build
+
+#Aguarde o banco de dados ficar pronto
 
 # Instalar dependências (apenas se necessário)
 docker-compose exec backend composer install
@@ -154,12 +278,12 @@ top5-tiao-carreiro-v2/
 - [x] v6.1: Testes unitários Laravel
 - [x] v6.2: Testes de API com PHPUnit
 - [x] v6.3: Testes de componentes React
-- [] v6.4: Testes e2e com Cypress
+- [ ] v6.4: Testes e2e com Cypress
 
 ### Sprint 7: Polimento e Deploy
 
 - [x] v7.1: Documentação completa
-- [ ] v7.2: Variáveis de ambiente exemplos
+- [x] v7.2: Variáveis de ambiente exemplos
 - [ ] v7.3: Scripts de build e deploy
 - [ ] v7.4: Testes finais e ajustes
 
