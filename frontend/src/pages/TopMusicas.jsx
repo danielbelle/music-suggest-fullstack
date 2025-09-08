@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 import { useOptimisticUpdate } from "@/hooks/useOptimisticUpdate";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import PerfilImage from "@/assets/perfilImg.png";
+import PerfilImg from "@/assets/perfilImg.png";
 
 export default function TopMusicas() {
   const { user } = useAuth();
@@ -168,43 +168,49 @@ export default function TopMusicas() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-background/80 flex flex-col">
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         {message && (
           <Alert
             variant={message.type === "error" ? "destructive" : "default"}
-            className="mb-4"
+            className="mb-6 glass"
           >
             <AlertDescription>{message.text}</AlertDescription>
           </Alert>
         )}
-        {/* Header Principal */}
-        <Card className="mb-8 text-center">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold">
+
+        {/* Header Principal com Imagem */}
+        <Card className="mb-8 text-center glass border-0">
+          <CardHeader className="pb-4">
+            <div className="flex justify-center mb-4">
+              <img
+                src={PerfilImg}
+                alt="Tião Carreiro e Pardinho"
+                className="w-32 h-32 profile-image rounded-full object-cover shadow-lg"
+              />
+            </div>
+            <CardTitle className="text-4xl font-bold text-foreground">
               Top 5 Músicas Mais Tocadas
             </CardTitle>
-            <CardDescription className="text-lg">
+            <CardDescription className="text-lg text-muted-foreground">
               Tião Carreiro & Pardinho
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <img
-              src={PerfilImage}
-              alt="Tião Carreiro e Pardinho"
-              className="mx-auto w-32 h-32 rounded-2xl object-cover mb-4"
-            />
             <p className="text-muted-foreground">
               O legado da música sertaneja de raiz
             </p>
           </CardContent>
         </Card>
+
         {/* Formulário de Sugestão */}
-        <Card className="mb-8">
+        <Card className="mb-8 glass border-0">
           <CardHeader>
-            <CardTitle className="text-xl">Sugerir Nova Música</CardTitle>
+            <CardTitle className="text-xl font-semibold">
+              Sugerir Nova Música
+            </CardTitle>
             <CardDescription>
               {user
                 ? "Como usuário autenticado, sua música será adicionada diretamente!"
@@ -215,18 +221,26 @@ export default function TopMusicas() {
             <SuggestionForm onSuggestionAdded={handleSuggestionAdded} />
           </CardContent>
         </Card>
+
         {/* Lista de Músicas */}
-        <Card>
+        <Card className="glass border-0">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-xl">Ranking Atual</CardTitle>
+              <CardTitle className="text-xl font-semibold">
+                Ranking Atual
+              </CardTitle>
               {user && (
                 <CardDescription>
                   Você está autenticado e pode editar ou excluir músicas
                 </CardDescription>
               )}
             </div>
-            <Button onClick={fetchMusicas} variant="outline" size="sm">
+            <Button
+              onClick={fetchMusicas}
+              variant="outline"
+              size="sm"
+              className="glass"
+            >
               Atualizar
             </Button>
           </CardHeader>
@@ -242,7 +256,9 @@ export default function TopMusicas() {
               <div className="space-y-8">
                 {/* Top 5 Músicas */}
                 <div>
-                  <h3 className="text-xl font-semibold mb-4">Top 5 Músicas</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-foreground">
+                    Top 5 Músicas
+                  </h3>
                   <div className="space-y-3">
                     {top5Musicas.map((musica, index) => (
                       <MusicCard
@@ -265,7 +281,7 @@ export default function TopMusicas() {
                 {/* Demais Músicas */}
                 {remainingMusicas.length > 0 && (
                   <div>
-                    <h3 className="text-xl font-semibold mb-4">
+                    <h3 className="text-xl font-semibold mb-4 text-foreground">
                       Mais Músicas ({remainingMusicas.length} no total)
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
