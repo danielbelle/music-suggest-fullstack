@@ -7,6 +7,7 @@ use App\Models\Sugestao;
 use App\Models\Musica;
 use App\Rules\YouTubeUrl;
 use App\Rules\YouTubeId;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class SugestaoController extends Controller
 {
@@ -41,15 +42,37 @@ class SugestaoController extends Controller
             'email_usuario' => 'nullable|email|max:255',
         ]);
 
-        // Se usuário está autenticado, criar música diretamente
-        if ($request->user()) {
+        // ✅ VERIFICAÇÃO MANUAL do usuário autenticado via token Sanctum
+        $user = null;
+        if ($request->bearerToken()) {
+            try {
+                // Buscar o token no banco
+                $token = \Laravel\Sanctum\PersonalAccessToken::findToken($request->bearerToken());
+
+                if ($token) {
+                    // Buscar o usuário associado ao token
+                    $user = $token->tokenable;
+
+                    // Verificar se o usuário ainda existe e é válido
+                    if (!$user instanceof \App\Models\User) {
+                        $user = null;
+                    }
+                }
+            } catch (\Exception $e) {
+                // Token inválido ou erro, tratar como usuário não autenticado
+                \Log::warning('Token inválido na sugestão: ' . $e->getMessage());
+            }
+        }
+
+        // Se usuário está autenticado (via token), criar música diretamente
+        if ($user) {
             // Criar a música diretamente
             $musicaData = [
                 'titulo' => $validated['titulo'],
                 'youtube_id' => $validated['youtube_id'],
                 'thumb' => $validated['thumb'],
                 'visualizacoes' => 0,
-                'user_id' => $request->user()->id,
+                'user_id' => $user->id,
             ];
 
             $musica = Musica::create($musicaData);
@@ -58,10 +81,10 @@ class SugestaoController extends Controller
             $sugestaoData = array_merge($validated, [
                 'status' => 'aprovada',
                 'musica_id' => $musica->id,
-                'user_id' => $request->user()->id,
+                'user_id' => $user->id,
             ]);
 
-            $sugestao = $request->user()->sugestoes()->create($sugestaoData);
+            $sugestao = $user->sugestoes()->create($sugestaoData);
 
             return response()->json([
                 'message' => 'Música adicionada com sucesso!',

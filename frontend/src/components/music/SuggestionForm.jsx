@@ -72,11 +72,24 @@ export default function SuggestionForm({ onSuggestionAdded }) {
         sugestaoData.user_id = user.id;
       }
 
-      await api.post("/sugestoes", sugestaoData);
+      // ✅ DEBUG: Verificar token antes da requisição
+      const token = localStorage.getItem("auth_token");
+      console.log("Token no localStorage:", token);
+      console.log("User no context:", user);
+      console.log("Enviando dados:", sugestaoData);
+
+      const response = await api.post("/sugestoes", sugestaoData);
+
+      // ✅ DEBUG: Verificar resposta
+      console.log("Resposta da API:", response.data);
+
+      const successMessage = user
+        ? response.data.message || "Música adicionada com sucesso!"
+        : "Sugestão enviada com sucesso! Aguarde aprovação.";
 
       setMessage({
         type: "success",
-        text: "Sugestão enviada com sucesso! Aguarde aprovação.",
+        text: successMessage,
       });
       setUrl("");
 
@@ -84,6 +97,10 @@ export default function SuggestionForm({ onSuggestionAdded }) {
         onSuggestionAdded();
       }
     } catch (error) {
+      // ✅ DEBUG: Verificar erro completo
+      console.error("Erro completo:", error);
+      console.error("Resposta de erro:", error.response);
+
       setMessage({
         type: "error",
         text: error.response?.data?.message || "Erro ao enviar sugestão.",
