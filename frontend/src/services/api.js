@@ -13,10 +13,8 @@ const api = axios.create({
 // Interceptor para adicionar token automaticamente
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("auth_token");
-  console.log("Token encontrado:", token ? "Sim" : "Não");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-    console.log("Authorization header adicionado");
   }
   return config;
 });

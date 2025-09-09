@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormatViews } from "@/utils/FormatViews";
 
 export default function AdminStats({ suggestions, musicas }) {
   const totalVisualizacoes = musicas.reduce(
@@ -20,7 +21,7 @@ export default function AdminStats({ suggestions, musicas }) {
     },
     {
       title: "Visualizações Totais",
-      value: totalVisualizacoes.toLocaleString(),
+      value: FormatViews(totalVisualizacoes),
     },
     {
       title: "Músicas Visíveis",

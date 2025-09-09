@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormatViews } from "@/utils/FormatViews";
 
 export default function MusicCard({
   musica,
@@ -133,7 +134,7 @@ export default function MusicCard({
                   {musica.titulo}
                 </h4>
                 <p className="text-xs text-muted-foreground">
-                  {musica.visualizacoes.toLocaleString()} views
+                  {FormatViews(musica.visualizacoes)} views
                 </p>
               </>
             )}
@@ -211,7 +212,7 @@ export default function MusicCard({
               {musica.titulo}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {musica.visualizacoes.toLocaleString()} visualizações
+              {FormatViews(musica.visualizacoes)} visualizações
             </p>
           </>
         )}

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { FormatViews } from "@/utils/FormatViews";
 
 export default function AdminMusics({
   musicas,
@@ -64,9 +65,7 @@ export default function AdminMusics({
               <TableCell className="text-sm text-muted-foreground">
                 {musica.youtube_id}
               </TableCell>
-              <TableCell>
-                {(musica.visualizacoes || 0).toLocaleString()}
-              </TableCell>
+              <TableCell>{FormatViews(musica.visualizacoes || 0)}</TableCell>
               <TableCell>
                 <Badge variant={musica.visivel ? "default" : "outline"}>
                   {musica.visivel ? "Visível" : "Oculta"}

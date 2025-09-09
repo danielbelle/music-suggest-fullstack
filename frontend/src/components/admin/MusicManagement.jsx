@@ -5,17 +5,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import api from "@/services/api";
 import { useOptimisticUpdate } from "@/hooks/useOptimisticUpdate";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FormatViews } from "@/utils/FormatViews";
 
 export default function MusicManagement({ musicas, loading, onRefresh }) {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [message, setMessage] = useState(null);
-  const [localMusicas, setLocalMusicas] = useState(musicas); // ✅ Estado local
+  const [localMusicas, setLocalMusicas] = useState(musicas);
 
   const { optimisticUpdate, optimisticDelete, commitUpdate, rollbackUpdate } =
     useOptimisticUpdate();
 
-  // ✅ Atualizar estado local quando as props mudarem
   React.useEffect(() => {
     setLocalMusicas(musicas);
   }, [musicas]);
@@ -32,17 +32,14 @@ export default function MusicManagement({ musicas, loading, onRefresh }) {
 
   const handleSave = async (musicaId) => {
     try {
-      // ✅ Atualização otimista - usando estado local
       const updatedMusicas = optimisticUpdate(musicaId, editForm, localMusicas);
       setLocalMusicas(updatedMusicas);
       setEditingId(null);
 
-      // ✅ API call
       await api.put(`/musicas/${musicaId}`, editForm);
 
-      // ✅ Confirma e atualiza dados do servidor
       commitUpdate(musicaId);
-      onRefresh(); // ✅ Recarrega dados reais do servidor
+      onRefresh();
 
       setMessage({
         type: "success",
@@ -51,7 +48,6 @@ export default function MusicManagement({ musicas, loading, onRefresh }) {
     } catch (error) {
       console.error("Erro ao atualizar música:", error);
 
-      // ✅ Rollback
       const rolledBackMusicas = rollbackUpdate(musicaId, localMusicas);
       setLocalMusicas(rolledBackMusicas);
 
@@ -66,16 +62,13 @@ export default function MusicManagement({ musicas, loading, onRefresh }) {
     if (!window.confirm("Tem certeza que deseja excluir esta música?")) return;
 
     try {
-      // ✅ Deleção otimista - usando estado local
       const updatedMusicas = optimisticDelete(musicaId, localMusicas);
       setLocalMusicas(updatedMusicas);
 
-      // ✅ API call
       await api.delete(`/musicas/${musicaId}`);
 
-      // ✅ Confirma e atualiza dados do servidor
       commitUpdate(musicaId);
-      onRefresh(); // ✅ Recarrega dados reais do servidor
+      onRefresh();
 
       setMessage({
         type: "success",
@@ -84,7 +77,6 @@ export default function MusicManagement({ musicas, loading, onRefresh }) {
     } catch (error) {
       console.error("Erro ao excluir música:", error);
 
-      // ✅ Rollback
       const rolledBackMusicas = rollbackUpdate(musicaId, localMusicas);
       setLocalMusicas(rolledBackMusicas);
 
@@ -171,7 +163,7 @@ export default function MusicManagement({ musicas, loading, onRefresh }) {
                 <>
                   <h4 className="font-semibold">{musica.titulo}</h4>
                   <p className="text-sm text-muted-foreground">
-                    {musica.visualizacoes.toLocaleString()} visualizações
+                    {FormatViews(musica.visualizacoes)} visualizações
                   </p>
                   <p className="text-sm text-muted-foreground">
                     YouTube ID: {musica.youtube_id}

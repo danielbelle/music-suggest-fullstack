@@ -203,7 +203,7 @@ top5-tiao-carreiro-v2/
 ### Sprint 4: Sistema de Autenticação
 
 - [x] v4.1: Sistema de login frontend
-- [ ] v4.2: Proteção de rotas React
+- [x] v4.2: Proteção de rotas React
 - [x] v4.3: Middleware de autenticação Laravel
 - [x] v4.4: Gestão de tokens com Sanctum
 
@@ -225,15 +225,16 @@ top5-tiao-carreiro-v2/
 
 - [x] v7.1: Documentação completa
 - [x] v7.2: Variáveis de ambiente exemplos
-- [ ] v7.3: Scripts de build e deploy
-- [ ] v7.4: Testes finais e ajustes
+- [x] v7.3: Teste rotas backend
+- [x] v7.4: Ajustes
 
 ### Sprint 8: Futuras implementações
 
-- [ ] v8.1: Testes
-- [ ] v8.2:
-- [ ] v7.3:
-- [ ] v7.4:
+- [ ] v8.1: Reduzir e Reutilizar mais componentes no frontend
+- [ ] v8.2: Teste completo Backend e Frontend
+- [ ] v8.3: Adicionar API do YouTube para Views
+- [ ] v8.4: Adicionar filtros e pesquisa de músicas
+- [ ] v8.5: Scripts de build e deploy
 
 ---
 
