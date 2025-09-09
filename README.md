@@ -8,7 +8,7 @@
 
 ---
 
-## 🎯 Objetivo do Projeto
+## 1) 🎯 Objetivo do Projeto
 
 Criar uma aplicação full‑stack para catalogar e gerenciar as Top 5 músicas de
 Tião Carreiro e Pardinho v2.0. O sistema expõe uma API RESTful (Laravel)
@@ -17,12 +17,16 @@ fácil reprodução do ambiente e inclui autenticação (Sanctum) e testes
 automatizados para garantir segurança, qualidade e facilidade de manutenção e
 deploy.
 
+v1.0 - Referência inicial:
+[jansenfelipe/top5-tiao-carreiro](https://github.com/jansenfelipe/top5-tiao-carreiro) -
+Desenvolvida por Jansen Felipe
+
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 2) 🚀 Tecnologias Utilizadas
 
 - **Backend**: Laravel 11.x, PHP 8.2+
-- **Frontend**: React 18.x, tailwindcss v4.1
+- **Frontend**: React 19.x, Tailwind CSS v4.1
 - **Database**: MySQL 8.0
 - **Container**: Docker + Docker Compose
 - **Auth**: Laravel Sanctum
@@ -30,7 +34,7 @@ deploy.
 
 ---
 
-## ⚡ Instruções rápidas para uma máquina limpa
+## 3) ⚡ Instruções rápidas para uma máquina limpa
 
 Siga estes passos para clonar e executar o projeto mesmo que você não tenha
 ferramentas instaladas localmente.
@@ -51,7 +55,7 @@ ferramentas instaladas localmente.
 
 ---
 
-## 1. Clonar o repositório
+## 3.1) Clonar o repositório
 
 No PowerShell ou CMD faça:
 
@@ -63,31 +67,31 @@ git clone https://github.com/danielbelle/music-suggest-fullstack.git
 cd music-suggest-fullstack
 ```
 
-## 2. Subir containers
+## 3.2) Subir containers
 
 ```powershell
 docker-compose up -d
 ```
 
-## 3. Instalar dependências do backend (APENAS no container)
+## 3.3) Instalar dependências do backend (APENAS no container)
 
 ```powershell
 docker-compose run --rm backend composer install
 ```
 
-## 4. Instalar dependências do frontend (APENAS no container)
+## 3.4) Instalar dependências do frontend (APENAS no container)
 
 ```powershell
 docker-compose run --rm frontend npm install
 ```
 
-## 5. Permissões de pastas
+## 3.5) Permissões de pastas
 
 ```powershell
 docker-compose exec backend sh -c "chmod -R 775 storage bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache"
 ```
 
-## 6 Criar o arquivo .env e
+## 3.6) Criar o arquivo .env e
 
 Altere o backend/env.exemple para backend/.env, em seguida gere a api key
 laravel:
@@ -100,13 +104,13 @@ docker-compose run --rm backend php artisan key:generate
 APP_KEY=ADICIONAR_KEY_AQUI
 ```
 
-## 7. Configurar Laravel
+## 3.7) Configurar Laravel
 
 ```powershell
 docker-compose run --rm backend php artisan migrate --seed
 ```
 
-## 8. Instalado
+## 3.8) Instalado
 
 ### URLs
 
@@ -120,7 +124,27 @@ docker-compose run --rm backend php artisan migrate --seed
 
 ---
 
-### 3. Usando o Makefile (se você tiver make instalado)
+## 3.9) Executando Testes
+
+Os testes estão limitados, apenas estão configurados e testes básicos
+
+```bash
+# Testes backend
+docker-compose exec backend php artisan test
+
+# Testes frontend
+docker-compose exec frontend npm test
+```
+
+## 3.10) Parar e remover containers/volumes
+
+```powershell
+docker-compose down -v
+```
+
+---
+
+## 3. (OPCIONAL) Usando o Makefile se você tiver make instalado
 
 ```powershell
 # comando único (Makefile já encapsula build, wait, migrate e seed)
@@ -138,77 +162,6 @@ make testb
 
 ---
 
-### 4. Sem Make (passo a passo manual)
-
-```powershell
-# Build e sobe todos os serviços em background
-docker-compose up -d --build
-
-# Aguarde o banco de dados ficar pronto
-
-# Instalar dependências (apenas se necessário)
-docker-compose exec backend composer install
-docker-compose exec frontend npm install
-
-# Rodar migrations e seed
-docker-compose exec backend php artisan migrate --seed
-
-# Ver logs (se necessário)
-docker-compose logs -f
-```
-
----
-
-### 5. Alternativa: executar targets do Make dentro de um container (se não tiver make no host)
-
-```powershell
-# no Windows CMD/PowerShell (usa imagem Alpine temporária)
-docker run --rm -v "%cd%":/work -w /work alpine:latest sh -c "apk add --no-cache make && make start"
-```
-
----
-
-### 6. URLs locais padrão
-
-- Frontend: http://localhost:3000
-- Backend (NGINX): http://localhost:9000
-
----
-
-### 7. Parar e remover containers/volumes
-
-```powershell
-docker-compose down -v
-```
-
----
-
-## 6. URLs locais padrão
-
-- Frontend: http://localhost:3000
-- Backend (NGINX): http://localhost:9000
-
----
-
-## Credenciais Padrão
-
-- **Email:** root@root.com
-- **Senha:** root1234
-
----
-
-## 🧪 Executando Testes
-
-Os testes estão limitados, apenas estão configurados e testes básicos
-
-```bash
-# Testes backend
-docker-compose exec backend php artisan test
-
-# Testes frontend
-docker-compose exec frontend npm test
-```
-
 **Dicas rápidas:**
 
 - Se algo não subir, verifique o status e os logs dos serviços:  
@@ -221,7 +174,7 @@ docker-compose exec frontend npm test
 
 ---
 
-## 📋 Sprint Planning
+## 4 📋 Sprint Planning
 
 ### 📁 Estrutura do Projeto
 
