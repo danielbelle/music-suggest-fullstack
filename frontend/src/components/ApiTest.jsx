@@ -1,4 +1,3 @@
-// src/components/ApiTest.jsx
 import React from "react";
 import api from "@/services/api";
 import { Button } from "@/components/ui/button";

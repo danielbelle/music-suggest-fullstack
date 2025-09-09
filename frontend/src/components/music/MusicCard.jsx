@@ -90,7 +90,7 @@ export default function MusicCard({
         )}
 
         <div className="flex flex-col h-full">
-          {/* Thumb aumentada - de h-32 para h-40 */}
+          {/* Número da posição para layout compacto */}
           <img
             src={musica.thumb}
             alt={musica.titulo}

@@ -11,14 +11,14 @@ const mockMusic = {
   genero: "Rock",
   duracao: "3:45",
   visualizacoes: 1500,
-  youtube_id: "test123", // ← Adicione esta propriedade também
+  youtube_id: "test123",
 };
 
 test("renders music information", () => {
-  render(<MusicCard musica={mockMusic} index={0} />); // ← Adicione index={0}
+  render(<MusicCard musica={mockMusic} index={0} />);
 
   expect(screen.getByText("Test Song")).toBeInTheDocument();
-  expect(screen.getByText("1,500 visualizações")).toBeInTheDocument();
+  expect(screen.getByText("1.5k visualizações")).toBeInTheDocument();
   expect(screen.getByAltText("Test Song")).toHaveAttribute(
     "src",
     "https://example.com/thumb.jpg"
@@ -26,13 +26,13 @@ test("renders music information", () => {
 });
 
 test("renders music position", () => {
-  render(<MusicCard musica={mockMusic} index={0} />); // ← Adicione index={0}
+  render(<MusicCard musica={mockMusic} index={0} />);
 
   expect(screen.getByText("#1")).toBeInTheDocument();
 });
 
 test("renders watch button", () => {
-  render(<MusicCard musica={mockMusic} index={0} />); // ← Adicione index={0}
+  render(<MusicCard musica={mockMusic} index={0} />);
 
   expect(screen.getByText("Assistir")).toBeInTheDocument();
 });

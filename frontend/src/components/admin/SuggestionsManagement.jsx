@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useOptimisticUpdate } from "@/hooks/useOptimisticUpdate";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import api from "@/services/api"; // ✅ ADICIONAR ESTA IMPORTACAO
+import api from "@/services/api"; //  ADICIONAR ESTA IMPORTACAO
 
 export default function SuggestionsManagement({
   suggestions,
@@ -17,7 +17,7 @@ export default function SuggestionsManagement({
 
   const handleAction = async (sugestaoId, action) => {
     try {
-      // ✅ Atualização otimista
+      //  Atualização otimista
       const updatedSuggestions = optimisticUpdate(
         sugestaoId,
         { status: action === "approve" ? "aprovada" : "rejeitada" },
@@ -25,14 +25,14 @@ export default function SuggestionsManagement({
       );
       onRefresh(updatedSuggestions);
 
-      // ✅ API call - CORRIGIDO: usando api importado
+      //  API call - CORRIGIDO: usando api importado
       if (action === "approve") {
         await api.patch(`/sugestoes/${sugestaoId}/aprovar`);
       } else {
         await api.patch(`/sugestoes/${sugestaoId}/reprovar`);
       }
 
-      // ✅ Confirma
+      //  Confirma
       commitUpdate(sugestaoId);
 
       setMessage({
@@ -44,7 +44,7 @@ export default function SuggestionsManagement({
     } catch (error) {
       console.error("Erro ao processar sugestão:", error);
 
-      // ✅ Rollback
+      //  Rollback
       const rolledBackSuggestions = rollbackUpdate(sugestaoId, suggestions);
       onRefresh(rolledBackSuggestions);
 

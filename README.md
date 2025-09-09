@@ -252,10 +252,11 @@ top5-tiao-carreiro-v2/
 #### Sprint 8: Futuras implementações
 
 - [ ] v8.1: Reduzir e Reutilizar mais componentes no frontend
-- [ ] v8.2: Teste completo Backend e Frontend
-- [ ] v8.3: Adicionar API do YouTube para Views
-- [ ] v8.4: Adicionar filtros e pesquisa de músicas
-- [ ] v8.5: Scripts de build e deploy
+- [ ] v8.2: Limpar arquivos desnecessários e console.log()
+- [ ] v8.3: Teste completo Backend e Frontend
+- [ ] v8.4: Adicionar API do YouTube para Views
+- [ ] v8.5: Adicionar filtros e pesquisa de músicas
+- [ ] v8.6: Scripts de build e deploy
 
 ---
 
